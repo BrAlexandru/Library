@@ -6,30 +6,32 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp3
 {
-    class Account
+    public interface IBook
     {
-
-        #region Proprietes
-
-        public string Username
+        string Name
         {
             get;
             set;
         }
-        public string Password
+        string BookType
         {
             get;
             set;
         }
-
-        
-        #endregion
-
-        public Account(string user,string pass)
+        string Author
         {
-            Username = user;
-            Password = pass;
+            get;
+            set;
         }
-
+        int BookCode
+        {
+            get;
+            set;
+        }
+        string Genre
+        {
+            get;
+            set;
+        }
     }
 }

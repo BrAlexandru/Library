@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp3
 {
-    public class Library
+    public sealed class Library : ILibrary
     {
         private static Library _instance;
         private static object _padlock = new object();
@@ -14,22 +14,22 @@ namespace ConsoleApp3
         public string Name
         {
             get;
-            private set;
+            set;
         }
-        public Librarian Admin
+        public ILibrarian Admin
         {
             get;
-            private set;
+            set;
         }
-        private List<Reader> _readers = new List<Reader>();
-        private List<Book> _books = new List<Book>();
+        private List<IReader> _readers = new List<IReader>();
+        private List<IBook> _books = new List<IBook>();
         #endregion
-        private Library(string name,Librarian admin)
+        private Library(string name, ILibrarian admin)
         {
             Name = name;
             Admin = admin;
         }
-        public static Library Instance(string name, Librarian admin)
+        public static Library Instance(string name, ILibrarian admin)
         {
             if (_instance == null)
                 lock (_padlock)
@@ -37,11 +37,12 @@ namespace ConsoleApp3
                         _instance = new Library(name, admin);
             return _instance;
         }
-        public void AddReader(Reader reader)
+        public void AddReader(IReader reader)
         {
             _readers.Add(reader);
+
         }
-        public void AddBook(Book book)
+        public void AddBook(IBook book)
         {
             _books.Add(book);
         }
@@ -74,7 +75,6 @@ namespace ConsoleApp3
                         Notify(book);
                         _books.Remove(book);
                         g = true;
-                        
                     }
                 if (g == false)
                     Console.WriteLine("There is no book with the give code");
@@ -83,23 +83,54 @@ namespace ConsoleApp3
                 Console.WriteLine("There is no books to remove");
 
         }
-        public void Notify(Book a)
+        public void Notify(IBook a)
         {
             foreach (var reader in _readers)
                 reader.Update(a);
         }
         public void DisplayBooks()
         {
-            foreach (var book in _books)
-                Console.WriteLine(book.ToString());
+
+            if (_books.Count > 0)
+            {
+                _books = _books.OrderBy(a => a.Name).ToList();
+                foreach (var book in _books)
+                    Console.WriteLine(book.ToString());
+
+            }
+            else
+                Console.WriteLine("No books to display");
+
         }
         public void DisplayReaders()
         {
-            foreach (var reader in _readers)
-                Console.WriteLine(reader.ToString());
-
+            if (_readers.Count > 0)
+            {
+                _readers = _readers.OrderBy(a => a.Name).ToList();
+                foreach (var reader in _readers)
+                    Console.WriteLine(reader.ToString());
+            }
+            else
+                Console.WriteLine("No readers to display");
         }
-        public void Search(string name,string author,string type)
+        public void MaxBooks()
+        {
+            if (_readers.Count > 0)
+            {
+                int max = 0;
+                IReader reader = _readers[0];
+                foreach (var i in _readers)
+                    if (i.NrBooks() > max)
+                    {
+                        max = i.NrBooks();
+                        reader = i;
+                    }
+                Console.WriteLine($"The reader {reader.Name} has the most borrowed books.({reader.NrBooks()})");
+            }
+            else
+                Console.WriteLine("No readers");
+        }
+        public void Search(string name, string author, string type)
         {
             bool g = false;
             foreach (var book in _books)
@@ -111,28 +142,43 @@ namespace ConsoleApp3
             if (g == false)
                 Console.WriteLine("There is no book");
         }
-        public void BorrowBook(string user,int code)
+        public void BorrowBook(string user, int code)
         {
-            Book book=new Book();
-            Reader reader = new Reader(); 
-            foreach (var i in _readers)
-                if (i.Name == user)
-                    reader = i;
-            foreach (var i in _books)
-                if (i.BookCode == code)
-                    book = i;
-            reader.AddBook(book);
-            _books.Remove(book);
+            if (_books.Count > 0)
+            {
+                bool g = false;
+                IBook book = new Book();
+                IReader reader = new Reader();
+                foreach (var i in _readers)
+                    if (i.Name == user)
+                        reader = i;
+                foreach (var i in _books)
+                    if (i.BookCode == code)
+                    {
+                        book = i;
+                        g = true;
+                    }
+                if (g == true)
+                {
+                    reader.AddBook(book);
+                    _books.Remove(book);
+                }
+                else
+                    Console.WriteLine("There is no book with the given code");
+            }
+            else
+                Console.WriteLine("There is no books to borrow");
         }
-        public void ReturnBook(string user,int code)
+        public void ReturnBook(string user, int code)
         {
-            Book a = new Book();
+            IBook a = new Book();
             foreach (var reader in _readers.ToList())
                 if (reader.Name == user)
-                    reader.ReturnBook(code,ref a);
+                    reader.ReturnBook(code, ref a);
             _books.Add(a);
+
         }
-        
-                    
+
+
     }
 }

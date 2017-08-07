@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp3
 {
-    public sealed class Librarian
+    public sealed class Librarian : ILibrarian
     {
         private static Librarian _instance;
         private static object _padlock = new object();
@@ -28,24 +28,21 @@ namespace ConsoleApp3
         }
 
         #endregion
-        private Librarian(string name, string id,string pass)
+        private Librarian(string name, string id, string pass)
         {
             Name = name;
             AdminID = id;
             Password = pass;
+
         }
-        public static Librarian Instance(string name,string id,string pass)
+        public static Librarian Instance(string name, string id, string pass)
         {
             if (_instance == null)
                 lock (_padlock)
                 {
                     if (_instance == null)
-                        _instance = new Librarian(name, id,pass);
-                    else
-                        Console.WriteLine("There already is an admin");
+                        _instance = new Librarian(name, id, pass);
                 }
-            else
-                Console.WriteLine("There already is an admin");
             return _instance;
         }
 

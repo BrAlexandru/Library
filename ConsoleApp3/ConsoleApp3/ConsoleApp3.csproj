@@ -48,14 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account.cs" />
-    <Compile Include="Book.cs" />
-    <Compile Include="Librarian.cs" />
-    <Compile Include="Library.cs" />
-    <Compile Include="Login.cs" />
+    <Compile Include="Class\Account.cs" />
+    <Compile Include="Class\Book.cs" />
+    <Compile Include="Interface\IAccount.cs" />
+    <Compile Include="Interface\IBook.cs" />
+    <Compile Include="Interface\ILibrarian.cs" />
+    <Compile Include="Interface\ILibrary.cs" />
+    <Compile Include="Interface\ILogin.cs" />
+    <Compile Include="Interface\IReader.cs" />
+    <Compile Include="Class\Librarian.cs" />
+    <Compile Include="Class\Library.cs" />
+    <Compile Include="Class\Login.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reader.cs" />
+    <Compile Include="Class\Reader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
