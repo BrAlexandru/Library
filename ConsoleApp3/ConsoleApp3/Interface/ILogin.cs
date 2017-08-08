@@ -9,8 +9,6 @@ namespace ConsoleApp3
     public interface ILogin
     {
 
-        void AddAccount(IAccount acc);
-        void AddAccount(string user, string pass);
 
         #region AdminInstructions
 
@@ -19,6 +17,7 @@ namespace ConsoleApp3
         void RemoveBook();
         void RemoveReader();
         void AdminInstruction();
+        void SearchReader();
 
         #endregion
 

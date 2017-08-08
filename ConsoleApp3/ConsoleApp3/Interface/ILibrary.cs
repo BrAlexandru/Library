@@ -26,10 +26,11 @@ namespace ConsoleApp3
         void Notify(IBook a);
         void DisplayBooks();
         void DisplayReaders();
-        void Search(string name, string author, string type);
+        void Search(string name, string author, string type,string genre);
         void BorrowBook(string user, int code);
         void ReturnBook(string user, int code);
         void MaxBooks();
+        void SearchReader(string name);
 
 
     }

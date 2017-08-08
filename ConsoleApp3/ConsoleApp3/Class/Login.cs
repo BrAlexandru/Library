@@ -18,28 +18,7 @@ namespace ConsoleApp3
             _librarian = librarian;
             _library = library;
         }
-        public void AddAccount(IAccount acc)
-        {
-            try
-            {
-                _accounts.Add(acc);
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-        public void AddAccount(string user, string pass)
-        {
-            try
-            {
-                _accounts.Add(new Account(user, pass));
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
+
         #region AdminInstructions
         public void AddBook()
         {
@@ -49,21 +28,37 @@ namespace ConsoleApp3
                 Console.Write("Book Name: ");
                 string name = Console.ReadLine();
                 if (name == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
+
                 Console.Write("Book Author: ");
                 string author = Console.ReadLine();
                 if (author == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
+
                 Console.Write("Book Type: ");
                 string type = Console.ReadLine();
                 if (type == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
+
                 Console.Write("Book Code: ");
                 int code = int.Parse(Console.ReadLine());
+
                 Console.Write("Book Genre: ");
                 string genre = Console.ReadLine();
                 if (genre == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
 
                 _library.AddBook(new Book(name, author, type, code, genre));
             }
@@ -83,17 +78,29 @@ namespace ConsoleApp3
                 Console.Write("Reader Name: ");
                 string name = Console.ReadLine();
                 if (name == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
+
                 Console.Write("Phone Number: ");
                 long phone = long.Parse(Console.ReadLine());
+
                 Console.Write("Email: ");
                 string email = Console.ReadLine();
                 if (email == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
+
                 Console.Write("Address: ");
                 string address = Console.ReadLine();
                 if (address == "")
-                    throw new FormatException();
+                {
+                    Console.WriteLine("Invalid input");
+                    return;
+                }
 
                 _library.AddReader(new Reader(name, email, address, phone));
 
@@ -107,16 +114,39 @@ namespace ConsoleApp3
         }
         public void RemoveBook()
         {
-            Console.Write("Code of the book: ");
-            int i = int.Parse(Console.ReadLine());
-            _library.RemoveBook(i);
+            try
+            {
+                Console.Write("Code of the book: ");
+                int i = int.Parse(Console.ReadLine());
+                _library.RemoveBook(i);
+            }
+            catch(FormatException)
+            {
+                Console.WriteLine("Invalid input");
+            }
         }
         public void RemoveReader()
         {
             Console.Write("Name of the reader: ");
             string reader = Console.ReadLine();
+            if(reader=="")
+            {
+                Console.WriteLine("Invalid input");
+                return;
+            }
             _library.RemoveReader(reader);
 
+        }
+        public void SearchReader()
+        {
+            Console.Write("Name of the reader: ");
+            string reader = Console.ReadLine();
+            if(reader=="")
+            {
+                Console.WriteLine("Invalid input");
+                return;
+            }
+            _library.SearchReader(reader);
         }
         public void AdminInstruction()
         {
@@ -129,6 +159,8 @@ namespace ConsoleApp3
             myDictionary.Add("D5", () => _library.DisplayBooks());
             myDictionary.Add("D6", () => _library.DisplayReaders());
             myDictionary.Add("D7", () => _library.MaxBooks());
+            myDictionary.Add("D8", () => SearchBook());
+            myDictionary.Add("D9", () => SearchReader());
 
             ConsoleKeyInfo key;
             do
@@ -140,6 +172,8 @@ namespace ConsoleApp3
                 Console.WriteLine("5.List all the books.");
                 Console.WriteLine("6.List all the readers.");
                 Console.WriteLine("7.The reader with the most borrowed books.");
+                Console.WriteLine("8.Search book");
+                Console.WriteLine("9.Search Reader");
 
 
                 key = Console.ReadKey();
@@ -190,21 +224,36 @@ namespace ConsoleApp3
             string author = Console.ReadLine();
             Console.Write("Type of the book: ");
             string type = Console.ReadLine();
+            Console.Write("Genre of the book: ");
+            string genre = Console.ReadLine();
 
-            _library.Search(name, author, type);
+            _library.Search(name, author, type,genre);
         }
         public void BorrowBook(IAccount a)
         {
-            Console.Write("Insert code of the book: ");
-            int code = int.Parse(Console.ReadLine());
-            _library.BorrowBook(a.Username, code);
+            try
+            {
+                Console.Write("Insert code of the book: ");
+                int code = int.Parse(Console.ReadLine());
+                _library.BorrowBook(a.Username, code);
+            }
+            catch(FormatException)
+            {
+                Console.WriteLine("Invalid input");
+            }
         }
         public void ReturnBook(IAccount a)
         {
-
-            Console.Write("Insert code of the book: ");
-            int code = int.Parse(Console.ReadLine());
-            _library.ReturnBook(a.Username, code);
+            try
+            {
+                Console.Write("Insert code of the book: ");
+                int code = int.Parse(Console.ReadLine());
+                _library.ReturnBook(a.Username, code);
+            }
+            catch(FormatException)
+            {
+                Console.WriteLine("Invalid input");
+            }
         }
         public void ReaderInstruction(IAccount a)
         {
@@ -214,6 +263,7 @@ namespace ConsoleApp3
             myDictionary.Add("D2", () => SearchBook());
             myDictionary.Add("D3", () => BorrowBook(a));
             myDictionary.Add("D4", () => ReturnBook(a));
+            myDictionary.Add("D5", () => _library.DisplayBooks());
 
             ConsoleKeyInfo key;
             do
@@ -222,6 +272,7 @@ namespace ConsoleApp3
                 Console.WriteLine("2. Search Book.");
                 Console.WriteLine("3. Borrow Book.");
                 Console.WriteLine("4. Return Book.");
+                Console.WriteLine("5. List all the books");
                 key = Console.ReadKey();
                 Console.Write("\n");
 

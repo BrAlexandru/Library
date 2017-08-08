@@ -117,30 +117,31 @@ namespace ConsoleApp3
         {
             if (_readers.Count > 0)
             {
-                int max = 0;
-                IReader reader = _readers[0];
-                foreach (var i in _readers)
-                    if (i.NrBooks() > max)
-                    {
-                        max = i.NrBooks();
-                        reader = i;
-                    }
+                var reader = _readers.OrderByDescending(x => x.NrBooks()).First();
                 Console.WriteLine($"The reader {reader.Name} has the most borrowed books.({reader.NrBooks()})");
+
             }
             else
                 Console.WriteLine("No readers");
+            
         }
-        public void Search(string name, string author, string type)
+        public void Search(string name, string author, string type,string genre)
         {
-            bool g = false;
+            var _searchBooks = new List<IBook>();
             foreach (var book in _books)
-                if (((book.Name == name) || (name == "")) && ((book.Author == author) || (author == "")) && ((book.BookType == type) || (type == "")))
-                {
+                if (((book.Name.ToUpper().Contains(name.ToUpper())) || (name == ""))&&((book.Author.ToUpper().Contains(author.ToUpper())) || (author == ""))&&((book.BookType.ToUpper().Contains(type.ToUpper())) || (type == "")) && ((book.Genre.ToUpper().Contains(genre.ToUpper())) || (genre == "")))
+                 _searchBooks.Add(book);
+
+
+            if (_searchBooks.Count > 0)
+            {
+                _searchBooks = _searchBooks.OrderBy(x => x.Name).ToList();
+                foreach (var book in _searchBooks)
                     Console.WriteLine(book.ToString());
-                    g = true;
-                }
-            if (g == false)
-                Console.WriteLine("There is no book");
+            }
+            else
+                Console.WriteLine("No books that match with the given arguments");
+                
         }
         public void BorrowBook(string user, int code)
         {
@@ -154,14 +155,22 @@ namespace ConsoleApp3
                         reader = i;
                 foreach (var i in _books)
                     if (i.BookCode == code)
-                    {
-                        book = i;
-                        g = true;
-                    }
+                        if (i.GetType().ToString() == "ConsoleApp3.BorrowedBook")
+                        {
+                            Console.WriteLine("This book is already borrowed");
+                            return;
+                        }
+                        else
+                        {
+                            book = i;
+                            g = true;
+                        }
+                    
                 if (g == true)
                 {
                     reader.AddBook(book);
                     _books.Remove(book);
+                    _books.Add(new BorrowedBook(book.Name, book.Author, book.BookType, book.BookCode, book.Genre, reader,DateTime.Now));
                 }
                 else
                     Console.WriteLine("There is no book with the given code");
@@ -177,6 +186,15 @@ namespace ConsoleApp3
                     reader.ReturnBook(code, ref a);
             _books.Add(a);
 
+        }
+        public void SearchReader(string reader)
+        {
+            foreach(var i in _readers)
+                if(i.Name==reader)
+                {
+                    Console.WriteLine(i.ToString());
+                    return;
+                }
         }
 
 

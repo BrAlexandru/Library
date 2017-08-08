@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BorrowedBook.cs" />
     <Compile Include="Class\Account.cs" />
     <Compile Include="Class\Book.cs" />
     <Compile Include="Interface\IAccount.cs" />
