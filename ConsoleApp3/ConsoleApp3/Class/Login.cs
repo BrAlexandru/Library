@@ -165,6 +165,7 @@ namespace ConsoleApp3
             ConsoleKeyInfo key;
             do
             {
+                Console.WriteLine();
                 Console.WriteLine("1.Add book to library.");
                 Console.WriteLine("2.Add reader to library.");
                 Console.WriteLine("3.Remove book.");
@@ -268,6 +269,7 @@ namespace ConsoleApp3
             ConsoleKeyInfo key;
             do
             {
+                Console.WriteLine();
                 Console.WriteLine("1. Change Password.");
                 Console.WriteLine("2. Search Book.");
                 Console.WriteLine("3. Borrow Book.");
@@ -304,8 +306,7 @@ namespace ConsoleApp3
                 string user = Console.ReadLine();
                 Console.Write("Password: ");
                 string pass = Console.ReadLine();
-                try
-                {
+                
                     if ((user == _librarian.AdminID) && (pass == _librarian.Password))
                     {
                         AdminInstruction();
@@ -322,11 +323,7 @@ namespace ConsoleApp3
                         if (ok == false)
                             Console.WriteLine("Wrong Username or Password");
                     }
-                }
-                catch (NullReferenceException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+
 
             } while (g.Key != ConsoleKey.Escape);
         }

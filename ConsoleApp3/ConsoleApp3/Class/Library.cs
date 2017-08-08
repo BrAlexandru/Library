@@ -29,6 +29,7 @@ namespace ConsoleApp3
             Name = name;
             Admin = admin;
         }
+
         public static Library Instance(string name, ILibrarian admin)
         {
             if (_instance == null)
@@ -37,15 +38,18 @@ namespace ConsoleApp3
                         _instance = new Library(name, admin);
             return _instance;
         }
+
         public void AddReader(IReader reader)
         {
             _readers.Add(reader);
 
         }
+
         public void AddBook(IBook book)
         {
             _books.Add(book);
         }
+
         public void RemoveReader(string name)
         {
             if (_readers.Count > 0)
@@ -64,6 +68,7 @@ namespace ConsoleApp3
             else
                 Console.WriteLine("There is no readers to remove");
         }
+
         public void RemoveBook(int code)
         {
             if (_books.Count > 0)
@@ -83,11 +88,13 @@ namespace ConsoleApp3
                 Console.WriteLine("There is no books to remove");
 
         }
+
         public void Notify(IBook a)
         {
             foreach (var reader in _readers)
                 reader.Update(a);
         }
+
         public void DisplayBooks()
         {
 
@@ -102,6 +109,7 @@ namespace ConsoleApp3
                 Console.WriteLine("No books to display");
 
         }
+
         public void DisplayReaders()
         {
             if (_readers.Count > 0)
@@ -113,18 +121,31 @@ namespace ConsoleApp3
             else
                 Console.WriteLine("No readers to display");
         }
+
         public void MaxBooks()
         {
             if (_readers.Count > 0)
             {
-                var reader = _readers.OrderByDescending(x => x.NrBooks()).First();
-                Console.WriteLine($"The reader {reader.Name} has the most borrowed books.({reader.NrBooks()})");
+                int max = _readers.Max(x => x.NrBooks());
+                if (max > 0)
+                {
+                    var readers = _readers.Where(x => x.NrBooks() == max);
+                    readers = readers.OrderBy(x => x.Name);
+                    foreach (var reader in readers)
+                        Console.WriteLine($"The reader {reader.Name} has the most borrowed books.({reader.NrBooks()})");
+                }
+                else
+                    Console.WriteLine("Nobody borrowed any book");
 
+                var debug = _readers.OrderBy(_ => _.NrBooks());
+
+                _readers.Where(_ => _.NrBooks() == _readers.Max(r => r.NrBooks()));
             }
             else
                 Console.WriteLine("No readers");
             
         }
+
         public void Search(string name, string author, string type,string genre)
         {
             var _searchBooks = new List<IBook>();
@@ -143,6 +164,7 @@ namespace ConsoleApp3
                 Console.WriteLine("No books that match with the given arguments");
                 
         }
+
         public void BorrowBook(string user, int code)
         {
             if (_books.Count > 0)
@@ -178,6 +200,7 @@ namespace ConsoleApp3
             else
                 Console.WriteLine("There is no books to borrow");
         }
+
         public void ReturnBook(string user, int code)
         {
             IBook a = new Book();
@@ -187,10 +210,11 @@ namespace ConsoleApp3
             _books.Add(a);
 
         }
+
         public void SearchReader(string reader)
         {
             foreach(var i in _readers)
-                if(i.Name==reader)
+                if(i.Name.ToUpper().Contains(reader.ToUpper()))
                 {
                     Console.WriteLine(i.ToString());
                     return;

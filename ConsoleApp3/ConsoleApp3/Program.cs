@@ -27,7 +27,11 @@ namespace ConsoleApp3
             library.AddBook(container.Resolve<IBook>("Book3"));
             library.AddBook(container.Resolve<IBook>("Book1"));
 
+            
+
             var login = container.Resolve<ILogin>(new { librarian = librarian, library = library });
+
+            
 
             
 
