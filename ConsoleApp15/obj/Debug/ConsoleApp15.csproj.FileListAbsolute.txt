@@ -1,0 +1,20 @@
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\ConsoleApp15.exe.config
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\ConsoleApp15.exe
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\ConsoleApp15.pdb
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\EntityFramework.dll
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.dll
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\EntityFramework.xml
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.xml
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\obj\Debug\ConsoleApp15.csprojResolveAssemblyReference.cache
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\obj\Debug\ConsoleApp15.exe
+c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\obj\Debug\ConsoleApp15.pdb
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\ConsoleApp15.exe.config
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\ConsoleApp15.exe
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\ConsoleApp15.pdb
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\EntityFramework.dll
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\EntityFramework.xml
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.csprojResolveAssemblyReference.cache
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.exe
+C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.pdb
