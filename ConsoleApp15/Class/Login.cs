@@ -253,6 +253,8 @@ namespace ConsoleApp15
                 { 
                     var book = db.Books.Where(x => x.BookID == code).Single();
 
+                    
+
                     foreach(var item in db.BorrowedBooks)
                         if(item.BookID==book.BookID)
                         {
@@ -262,7 +264,7 @@ namespace ConsoleApp15
                             return;
                         }
                     
-
+                    
                     db.Books.Remove(book);
 
                     db.SaveChanges();
@@ -288,7 +290,7 @@ namespace ConsoleApp15
         {
             try
             {
-                Console.Write("Id of the reader");
+                Console.Write("Id of the reader:");
                 int code = int.Parse(Console.ReadLine());
 
                 using (var db = new LIBRARYEntities())
@@ -333,8 +335,8 @@ namespace ConsoleApp15
                     return;
                 }
 
-                foreach (var book in db.Books)
-                    Console.WriteLine($"{book.BookID} {book.BookName} {book.BookAuthor} {book.BookType} {book.BookGenre}");
+                db.Books.ToList().ForEach(book => Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} {book.BookAuthor,-10} {book.BookType,-10} {book.BookGenre}"));
+
             }
         }
 
@@ -350,9 +352,8 @@ namespace ConsoleApp15
                     Console.ResetColor();
                     return;
                 }
-
-                foreach (var reader in db.Readers)
-                    Console.WriteLine($"{reader.ReaderID} {reader.ReaderName} {reader.ReaderPhone} {reader.ReaderEmail} {reader.ReaderAddress}");
+                db.Readers.ToList().ForEach(reader => Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-10} {reader.ReaderAddress}"));
+                
 
             }
         }
@@ -371,7 +372,7 @@ namespace ConsoleApp15
 
                 var reader = db.Readers.ToList().OrderByDescending(x => x.NrOfBooks()).First();
 
-                Console.WriteLine($"{reader.ReaderID} {reader.ReaderName} {reader.NrOfBooks()}");
+                Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.NrOfBooks()}");
                 
             }
         }
@@ -387,18 +388,20 @@ namespace ConsoleApp15
             Console.Write("Type of the book:");
             string type = Console.ReadLine();
 
-            Console.Write("Genre of the book");
+            Console.Write("Genre of the book:");
             string genre = Console.ReadLine();
 
             using (var db = new LIBRARYEntities())
             {
                 bool g = false;
-                foreach (var book in db.Books)
+                db.Books.ToList().ForEach(book =>
+                {
                     if (((book.BookName.ToUpper().Contains(name.ToUpper())) || (name == "")) && ((book.BookAuthor.ToUpper().Contains(author.ToUpper())) || (author == "")) && ((book.BookType.ToUpper().Contains(type.ToUpper())) || (type == "")) && ((book.BookGenre.ToUpper().Contains(genre.ToUpper())) || (genre == "")))
                     {
-                        Console.WriteLine($"{book.BookID} {book.BookName} {book.BookAuthor} {book.BookType} {book.BookGenre}");
+                        Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} {book.BookAuthor,-10} {book.BookType,-10} {book.BookGenre}");
                         g = true;
                     }
+                });
                 if (g == false)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -424,12 +427,14 @@ namespace ConsoleApp15
             using (var db = new LIBRARYEntities())
             {
                 bool g = false;
-                foreach(var reader in db.Readers)
-                    if(reader.ReaderName==name)
+                db.Readers.ToList().ForEach(reader =>
+                {
+                    if (reader.ReaderName == name)
                     {
-                        Console.WriteLine($"{reader.ReaderID} {reader.ReaderName} {reader.ReaderPhone} {reader.ReaderEmail} {reader.ReaderAddress}");
+                        Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-10} {reader.ReaderAddress}");
                         g = true;
                     }
+                });
                 if (g == false)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -463,8 +468,11 @@ namespace ConsoleApp15
                     Console.ResetColor();
                     return;
                 }
-                foreach(var item in late)
-                    Console.WriteLine($"{item.ReaderName}({item.ReaderID}) {item.BookName}({item.BookID}) {item.ExpectDate.ToString("dd MMM yyyy")}");
+                late.ToList().ForEach(item =>
+                {
+                    Console.WriteLine($"({item.ReaderID}){item.ReaderName,-10} ({item.BookID}){item.BookName,-10} {item.ExpectDate.ToString("dd MMM yyyy")}");
+                });
+                
                 
             }
         }
@@ -491,11 +499,16 @@ namespace ConsoleApp15
                     return;
                 }
 
-                foreach (var book in borrowed)
-                    Console.WriteLine($"{book.ReaderName }({book.ReaderID}) borrowed {book.BookName}({book.BookID}) from {book.BorrowedDate.ToString("dd MMM yyyy")} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
+                borrowed.ToList().ForEach(book =>
+                {
+                    Console.WriteLine($"({book.ReaderID}){book.ReaderName,-10 } borrowed ({book.BookID}){book.BookName,-10} from {book.BorrowedDate.ToString("dd MMM yyyy"),-11} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
+                });
+                
+                    
                     
             }
         }
+
 
         #endregion
 
@@ -607,7 +620,7 @@ namespace ConsoleApp15
                 foreach (var book in notBorrowed)
                     if (((book.BookName.ToUpper().Contains(name.ToUpper())) || (name == "")) && ((book.BookAuthor.ToUpper().Contains(author.ToUpper())) || (author == "")) && ((book.BookType.ToUpper().Contains(type.ToUpper())) || (type == "")) && ((book.BookGenre.ToUpper().Contains(genre.ToUpper())) || (genre == "")))
                     {
-                        Console.WriteLine($"{book.BookID} {book.BookName} {book.BookAuthor} {book.BookType} {book.BookGenre}");
+                        Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} {book.BookAuthor,-10} {book.BookType,-10} {book.BookGenre}");
                         g = true;
                     }
                 if (g == false)
@@ -639,7 +652,7 @@ namespace ConsoleApp15
                 }
 
                 foreach (var book in books)
-                    Console.WriteLine($"{book.BookID} {book.BookName} {book.BookAuthor} {book.BookType} {book.BookGenre}");
+                    Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} {book.BookAuthor,-10} {book.BookType,-10} {book.BookGenre}");
             }
         }
 
@@ -649,11 +662,8 @@ namespace ConsoleApp15
             {
                 var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
-                int i = 0;
-                foreach (var book in db.BorrowedBooks)
-                    if (book.ReaderID == account.ReaderID)
-                        i++;
-                if(i>=4)
+                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+                if(reader.NrOfBooks()>=4)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Can't borrow more then 4 books");
@@ -770,7 +780,7 @@ namespace ConsoleApp15
                     return;
                 }
                 foreach (var book in books)
-                    Console.WriteLine($"{book.BookID} {book.BookName} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
+                    Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
 
             }
         }

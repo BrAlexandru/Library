@@ -18,3 +18,13 @@ C:\Users\alexandru.bratu\Desktop\ConsoleApp15\bin\Debug\EntityFramework.SqlServe
 C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.csprojResolveAssemblyReference.cache
 C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.exe
 C:\Users\alexandru.bratu\Desktop\ConsoleApp15\obj\Debug\ConsoleApp15.pdb
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\ConsoleApp15.exe.config
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\ConsoleApp15.exe
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\ConsoleApp15.pdb
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\EntityFramework.dll
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\EntityFramework.xml
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\obj\Debug\ConsoleApp15.csprojResolveAssemblyReference.cache
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\obj\Debug\ConsoleApp15.exe
+C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\obj\Debug\ConsoleApp15.pdb
