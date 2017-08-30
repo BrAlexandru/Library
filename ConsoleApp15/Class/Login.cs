@@ -45,7 +45,7 @@ namespace ConsoleApp15
                         foreach(var account in db.Accounts)
                             if((user==account.AccountUsername) && (pass==account.AccountPassword))
                             {
-                                ReaderInstruction(account.AccountID);
+                                ReaderInstruction(account.ReaderID);
                                 ok = true;
                             }
                         if (ok == false)
@@ -74,7 +74,10 @@ namespace ConsoleApp15
                 {"H",()=>SearchReader() },
                 {"I",()=>LateReaders() },
                 {"J",()=>DisplayBorrowed() },
-                {"K",()=>MaxBooks() }
+                {"K",()=>MaxBooks() },
+                {"L",()=>Top() },
+                {"M",()=>HistoryOfTheBook() },
+                {"N",()=>HistroyOfTheReader() }
             };
             
             
@@ -94,6 +97,9 @@ namespace ConsoleApp15
                 Console.WriteLine("I.Display the readers who are late");
                 Console.WriteLine("J.Display all the borrowed books");
                 Console.WriteLine("K.The readers with the most borrowed books");
+                Console.WriteLine("L.Top 5 borrowed books");
+                Console.WriteLine("M.Display history of book");
+                Console.WriteLine("N.Display history of reader");
 
                 key = Console.ReadKey();
                 Console.WriteLine();
@@ -160,7 +166,8 @@ namespace ConsoleApp15
                     BookName = name,
                     BookAuthor=author,
                     BookType=type,
-                    BookGenre=genre
+                    BookGenre=genre,
+                    IsBorrowed=false
                 };
                 db.Books.Add(book);
 
@@ -185,6 +192,13 @@ namespace ConsoleApp15
 
                 Console.Write("Phone of the reader:");
                 long phone = long.Parse(Console.ReadLine());
+                if(phone<100000000 || phone>9999999999)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
 
                 Console.Write("Email of the reader:");
                 string email = Console.ReadLine();
@@ -242,27 +256,38 @@ namespace ConsoleApp15
             }
         }
 
+    
+
+
         private void RemoveBook()
         {
             try
             {
                 Console.Write("Code of the book:");
                 int code = int.Parse(Console.ReadLine());
+                if(code<=0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
 
                 using (var db = new LIBRARYEntities())
                 { 
                     var book = db.Books.Where(x => x.BookID == code).Single();
-
                     
+                    if(book.IsBorrowed==true)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Can't remove a borrowed book");
+                        Console.ResetColor();
+                        return;
+                    }
+                    foreach (var item in db.BorrowedBooks.ToList())
+                        if (item.BookID == book.BookID)
+                            db.BorrowedBooks.Remove(item);
 
-                    foreach(var item in db.BorrowedBooks)
-                        if(item.BookID==book.BookID)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Can't remove a borrowed book");
-                            Console.ResetColor();
-                            return;
-                        }
                     
                     
                     db.Books.Remove(book);
@@ -292,18 +317,38 @@ namespace ConsoleApp15
             {
                 Console.Write("Id of the reader:");
                 int code = int.Parse(Console.ReadLine());
+                if(code<=0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
 
                 using (var db = new LIBRARYEntities())
                 {
                     var reader = db.Readers.Where(x => x.ReaderID == code).Single();
                     db.Readers.Remove(reader);
 
-                    var account = db.Accounts.Where(x => x.ReaderID==code).Single();
+                    var account = db.Accounts.Where(x => x.ReaderID == code).Single();
                     db.Accounts.Remove(account);
 
-                    foreach (var book in db.BorrowedBooks.ToList())
-                        if (book.ReaderID == reader.ReaderID)
+                    foreach(var book in db.BorrowedBooks.ToList())
+                        if(book.ReaderID==code)
+                        {
+                            if(book.ReturnDate==null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Can't remove a reader who still has borrowed books");
+                                Console.ResetColor();
+                                return;
+                            }
                             db.BorrowedBooks.Remove(book);
+                        }
+
+
+                        
+                    
 
                     db.SaveChanges();
                 }
@@ -352,7 +397,7 @@ namespace ConsoleApp15
                     Console.ResetColor();
                     return;
                 }
-                db.Readers.ToList().ForEach(reader => Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-10} {reader.ReaderAddress}"));
+                db.Readers.ToList().ForEach(reader => Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-20} {reader.ReaderAddress}"));
                 
 
             }
@@ -426,22 +471,19 @@ namespace ConsoleApp15
 
             using (var db = new LIBRARYEntities())
             {
-                bool g = false;
-                db.Readers.ToList().ForEach(reader =>
+                try
                 {
-                    if (reader.ReaderName == name)
-                    {
-                        Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-10} {reader.ReaderAddress}");
-                        g = true;
-                    }
-                });
-                if (g == false)
+                    var reader = db.Readers.Where(x => x.ReaderName == name).Single();
+
+                    Console.WriteLine($"{reader.ReaderID,-3} {reader.ReaderName,-10} {reader.ReaderPhone,-10} {reader.ReaderEmail,-20} {reader.ReaderAddress}");
+                }
+                catch(Exception)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("There is no reader with the given name");
                     Console.ResetColor();
+                    return;
                 }
-                       
             }
         }
 
@@ -456,10 +498,10 @@ namespace ConsoleApp15
                                         ).Join(db.Books,
                                                x => x.BBook.BookID,
                                                book => book.BookID,
-                                               (x, book) => new { X = x, Book = book }
-                                        ).Select(y => new { y.X.Reader.ReaderName,y.X.Reader.ReaderID, y.Book.BookName,y.Book.BookID, y.X.BBook.ExpectDate }                                        
+                                               (x, book) => new { X=x, Book = book }
+                                        ).Select(y => new { y.X.Reader.ReaderName, y.Book.BookName, y.X.BBook.ExpectDate,y.X.BBook.ReturnDate }                                        
                                         ).ToList()
-                                        .Where(x => x.ExpectDate.AddHours(17) < DateTime.Now
+                                        .Where(x => x.ExpectDate.AddHours(17) < DateTime.Now && x.ReturnDate==null
                                         ).OrderBy(x => x.ExpectDate).ThenBy(x => x.ReaderName).ThenBy(x => x.BookName);
                 if (late.Count() == 0)
                 {
@@ -470,7 +512,7 @@ namespace ConsoleApp15
                 }
                 late.ToList().ForEach(item =>
                 {
-                    Console.WriteLine($"({item.ReaderID}){item.ReaderName,-10} ({item.BookID}){item.BookName,-10} {item.ExpectDate.ToString("dd MMM yyyy")}");
+                    Console.WriteLine($"{item.ReaderName,-10} {item.BookName,-10} {item.ExpectDate.ToString("dd MMM yyyy")}");
                 });
                 
                 
@@ -481,7 +523,8 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var borrowed = db.BorrowedBooks.Join(db.Books,
+                var borrowed = db.BorrowedBooks.Where(x=>x.ReturnDate==null)
+                                               .Join(db.Books,
                                                    bbook => bbook.BookID,
                                                    book => book.BookID,
                                                    (bbook, book) => new { BBook = bbook, Book = book }
@@ -489,8 +532,8 @@ namespace ConsoleApp15
                                                      x => x.BBook.ReaderID,
                                                      reader => reader.ReaderID,
                                                      (x, reader) => new { X = x, Reader = reader }
-                                              ).Select(y => new { y.X.Book.BookID, y.X.Book.BookName, y.X.BBook.BorrowedDate, y.X.BBook.ExpectDate, y.Reader.ReaderID, y.Reader.ReaderName }
-                                              ).ToList().OrderBy(x => x.BookID).ThenBy(x => x.ReaderID);
+                                              ).Select(y => new {  y.X.Book.BookName, y.X.BBook.BorrowedDate, y.X.BBook.ExpectDate,  y.Reader.ReaderName }
+                                              ).ToList().OrderBy(x => x.ReaderName).ThenBy(x => x.BookName);
                 if(borrowed.Count()==0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -501,7 +544,7 @@ namespace ConsoleApp15
 
                 borrowed.ToList().ForEach(book =>
                 {
-                    Console.WriteLine($"({book.ReaderID}){book.ReaderName,-10 } borrowed ({book.BookID}){book.BookName,-10} from {book.BorrowedDate.ToString("dd MMM yyyy"),-11} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
+                    Console.WriteLine($"{book.ReaderName,-10 } borrowed {book.BookName,-10} from {book.BorrowedDate.ToString("dd MMM yyyy"),-11} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
                 });
                 
                     
@@ -509,8 +552,182 @@ namespace ConsoleApp15
             }
         }
 
+        private void HistoryOfTheBook()
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                try
+                {
+                    Console.Write("Code of the book:");
+                    int code = int.Parse(Console.ReadLine());
+                    if(code<=0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input");
+                        Console.ResetColor();
+                        return;
+                    }
+                    var book = db.Books.Where(x => x.BookID == code).Single();
+
+                    var books = db.BorrowedBooks.Where(x => x.BookID == code)
+                                              .Join(db.Readers,
+                                                    bbook => bbook.ReaderID,
+                                                    reader => reader.ReaderID,
+                                                    (bbook, reader) => new { BBook = bbook, Reader = reader })
+                                              .Select(y => new { y.Reader.ReaderName, y.BBook.BorrowedDate, y.BBook.ReturnDate, y.BBook.ExpectDate })
+                                              .OrderBy(x => x.BorrowedDate).ToList();
+                    if(books.Count==0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{book.BookName} was never borrowed");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    foreach (var item in books)
+                    {
+                        if (item.ReturnDate != null)
+                            Console.WriteLine($"{book.BookName} was borrowed by {item.ReaderName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and was returned in {item.ReturnDate.Value.ToString("dd MMM yyyy")} ");
+                        else
+                            Console.WriteLine($"{book.BookName} was borrowed by {item.ReaderName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and need to be returned untill {item.ExpectDate.ToString("dd MMM yyyy")} ");
+                    }
+                    
+
+                }
+                catch(FormatException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+                catch(Exception)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No book with the given code");
+                    Console.ResetColor();
+                    return;
+                }
+            }
+        }
+
+        private void HistroyOfTheReader()
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                if (db.Readers.Count() == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No readers");
+                    Console.ResetColor();
+                    return;
+                }
+                try
+                {
+
+                    Console.Write("Code of the reader:");
+                    int code = int.Parse(Console.ReadLine());
+                    if (code <= 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    var reader = db.Readers.Where(x => x.ReaderID == code).Single();
+
+                    var history = db.BorrowedBooks.Where(x => x.ReaderID == code)
+                                                  .Join(db.Books,
+                                                        bbook => bbook.BookID,
+                                                        book => book.BookID,
+                                                        (bbook, book) => new { BBook = bbook, Book = book })
+                                                  .Select(y => new { y.BBook.BorrowedDate, y.BBook.ExpectDate, y.BBook.ReturnDate, y.Book.BookName })
+                                                  .OrderBy(x => x.BorrowedDate).ToList();
+                    if (history.Count == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{reader.ReaderName} never borrowed a book");
+                        Console.ResetColor();
+                        return;
+                    }
+                    foreach (var item in history)
+                    {
+                        if (item.ReturnDate != null)
+                            Console.WriteLine($"{reader.ReaderName} borrowed {item.BookName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and returned it in {item.ReturnDate.Value.ToString("dd MMM yyyy")}");
+                        else
+                            Console.WriteLine($"{reader.ReaderName} borrowed {item.BookName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and have to return it untill {item.ExpectDate.ToString("dd MMM yyyy")}");
+                    }
+
+                }
+                catch (FormatException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+                catch (Exception)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No reader with the given code");
+                    Console.ResetColor();
+                    return;
+                }
+
+            }
+        }
+
 
         #endregion
+
+
+        private  void Top()
+        {
+            try
+            { 
+            Console.Write("Year:");
+            int year = int.Parse(Console.ReadLine());
+
+                using (var db = new LIBRARYEntities())
+                {
+
+
+                    var books = db.BorrowedBooks.Where(x => x.BorrowedDate.Year == year)
+                                              .GroupBy(x => x.BookID)
+                                              .Select(y => new { y.Key, Count = y.Count() })
+                                              .Join(db.Books,
+                                                    x => x.Key,
+                                                    book => book.BookID,
+                                                    (x, book) => new { X = x, Book = book })
+                                              .Select(y => new { y.Book.BookName, y.Book.BookAuthor, y.X.Count })
+                                              .OrderByDescending(x => x.Count).ToList();
+                    if(books.Count==0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"No books borrowed in the year {year}");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    foreach (var book in books.Take(5))
+                        Console.WriteLine($"{book.BookName,-10} by {book.BookAuthor,-10} was borrowed {book.Count,-3} times");
+                }
+                
+            }
+            catch (FormatException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid input");
+                Console.ResetColor();
+                return;
+            }
+        }
+
+        
+
+
+
 
         #region Reader
 
@@ -523,7 +740,9 @@ namespace ConsoleApp15
                 {"C",()=>ReaderBookDisplay() },
                 {"D",()=>BorrowBook(id) },
                 {"E",()=>ReturnBook(id) },
-                {"F",()=>DisplayReaderBorrowed(id) }
+                {"F",()=>DisplayReaderBorrowed(id) },
+                {"G",()=>Top() },
+                {"H",()=>HistroyOfTheReader(id) }
                 
 
             };
@@ -538,7 +757,8 @@ namespace ConsoleApp15
                 Console.WriteLine("D.Borrow book");
                 Console.WriteLine("E.Return book");
                 Console.WriteLine("F.Display the borrowed books");
-                
+                Console.WriteLine("G.Top 5 most borrowed books");
+                Console.WriteLine("H.Display history of reader");
 
 
                 key = Console.ReadKey();
@@ -559,7 +779,9 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
+                
+
+                var account = db.Accounts.Where(x => x.ReaderID == id).Single();
 
                 Console.Write("Current password:");
                 if (Console.ReadLine() != account.AccountPassword)
@@ -592,14 +814,13 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var borrowed = db.BorrowedBooks.Select(x => x.BookID).ToList();
-
-                var notBorrowed = db.Books.Where(x => !borrowed.Contains(x.BookID)).ToList();
+                var notBorrowed = db.Books.Where(x => x.IsBorrowed==false).ToList();
+               
 
                 if(notBorrowed.Count==0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("All the books are borrowed");
+                    Console.WriteLine("All books are borrowed");
                     Console.ResetColor();
                     return;
                 }
@@ -639,11 +860,9 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var borrowed = db.BorrowedBooks.Select(x => x.BookID).ToList();
+                var notBorrowed = db.Books.Where(x => x.IsBorrowed == false).ToList();
 
-                var books = db.Books.Where(x => !borrowed.Contains(x.BookID)).ToList();
-
-                if(books.Count==0)
+                if(notBorrowed.Count==0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("No books to display");
@@ -651,7 +870,7 @@ namespace ConsoleApp15
                     return;
                 }
 
-                foreach (var book in books)
+                foreach (var book in notBorrowed)
                     Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} {book.BookAuthor,-10} {book.BookType,-10} {book.BookGenre}");
             }
         }
@@ -660,64 +879,71 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+                
+
+                var reader = db.Readers.Where(x => x.ReaderID == id).Single();
+
                 if(reader.NrOfBooks()>=4)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Can't borrow more then 4 books");
+                    Console.WriteLine("Can't borrow more books");
                     Console.ResetColor();
                     return;
                 }
 
+                var books = db.Books.Where(x => x.IsBorrowed == false).ToList();
+                
+                if(books.Count==0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No books to borrow");
+                    Console.ResetColor();
+                    return;
+                }
                 try
                 {
-                    var borrowed = db.BorrowedBooks.Select(x => x.BookID).ToList();
-
-                    var books = db.Books.Where(x => !borrowed.Contains(x.BookID)).ToList();
-
-                    if (books.Count == 0)
+                    Console.Write("Code of the book:");
+                    int code = int.Parse(Console.ReadLine());
+                    if(code<=0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("There are no books to borrow");
+                        Console.WriteLine("Invalid input");
                         Console.ResetColor();
                         return;
                     }
-
-                    Console.Write("Insert code of the book:");
-                    int code = int.Parse(Console.ReadLine());
 
                     var book = books.Where(x => x.BookID == code).Single();
 
                     var bbook = new BorrowedBook
                     {
                         BookID = book.BookID,
-                        ReaderID = account.ReaderID,
+                        ReaderID = reader.ReaderID,
                         BorrowedDate = DateTime.Now,
                         ExpectDate = DateTime.Now.AddMonths(1)
                     };
 
+                    book.IsBorrowed = true;
                     db.BorrowedBooks.Add(bbook);
 
                     db.SaveChanges();
 
-
                 }
-                catch (FormatException)
+                catch(FormatException)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid input");
                     Console.ResetColor();
+                    return;
                 }
                 catch(Exception)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("There is no book with the give code that ca be borrowed");
+                    Console.WriteLine("No book with the given code");
                     Console.ResetColor();
+                    return;
                 }
-                
-
+                   
             }
         }
 
@@ -726,18 +952,38 @@ namespace ConsoleApp15
             using (var db = new LIBRARYEntities())
             {
 
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
+               
 
-                
+                var reader = db.Readers.Where(x => x.ReaderID == id).Single();
 
                 try
                 {
+                    if(reader.NrOfBooks()==0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("No book to return");
+                        Console.ResetColor();
+                        return;
+                    }
+
                     Console.Write("Code of the book:");
                     int code = int.Parse(Console.ReadLine());
+                    if(code<=0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input");
+                        Console.ResetColor();
+                        return;
 
-                    var book = db.BorrowedBooks.Where(x => x.BookID == code && x.ReaderID == account.ReaderID).Single();
+                    }
 
-                    db.BorrowedBooks.Remove(book);
+                    var bbook = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.ReturnDate == null && x.BookID == code).Single();
+
+                    bbook.ReturnDate = DateTime.Now;
+
+                    var book = db.Books.Where(x => x.BookID == code).Single();
+
+                    book.IsBorrowed = false;
 
                     db.SaveChanges();
 
@@ -763,9 +1009,9 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.ReaderID == id).Single();
+                var reader = db.Readers.Where(x => x.ReaderID == id).Single();
 
-                var books = db.BorrowedBooks.Where(x => x.ReaderID == account.ReaderID)
+                var books = db.BorrowedBooks.Where(x=>x.ReturnDate==null).Where(x => x.ReaderID == reader.ReaderID)
                                             .Join(db.Books,
                                                   bbook => bbook.BookID,
                                                   book => book.BookID,
@@ -781,6 +1027,56 @@ namespace ConsoleApp15
                 }
                 foreach (var book in books)
                     Console.WriteLine($"{book.BookID,-3} {book.BookName,-10} untill {book.ExpectDate.ToString("dd MMM yyyy")}");
+
+            }
+        }
+
+        private void HistroyOfTheReader(int code)
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                if (db.Readers.Count() == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No readers");
+                    Console.ResetColor();
+                    return;
+                }
+                try
+                {
+
+                    var reader = db.Readers.Where(x => x.ReaderID == code).Single();
+
+                    var history = db.BorrowedBooks.Where(x => x.ReaderID == code)
+                                                  .Join(db.Books,
+                                                        bbook => bbook.BookID,
+                                                        book => book.BookID,
+                                                        (bbook, book) => new { BBook = bbook, Book = book })
+                                                  .Select(y => new { y.BBook.BorrowedDate, y.BBook.ExpectDate, y.BBook.ReturnDate, y.Book.BookName })
+                                                  .OrderBy(x => x.BorrowedDate).ToList();
+                    if (history.Count == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{reader.ReaderName} never borrowed a book");
+                        Console.ResetColor();
+                        return;
+                    }
+                    foreach (var item in history)
+                    {
+                        if (item.ReturnDate != null)
+                            Console.WriteLine($"{reader.ReaderName} borrowed {item.BookName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and returned it in {item.ReturnDate.Value.ToString("dd MMM yyyy")}");
+                        else
+                            Console.WriteLine($"{reader.ReaderName} borrowed {item.BookName} in {item.BorrowedDate.ToString("dd MMM yyyy")} and have to return it untill {item.ExpectDate.ToString("dd MMM yyyy")}");
+                    }
+
+                }
+                catch (Exception)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No reader with the given code");
+                    Console.ResetColor();
+                    return;
+                }
 
             }
         }

@@ -25,6 +25,7 @@ namespace ConsoleApp15
         public string BookAuthor { get; set; }
         public string BookType { get; set; }
         public string BookGenre { get; set; }
+        public Nullable<bool> IsBorrowed { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BorrowedBook> BorrowedBooks { get; set; }

@@ -31,14 +31,14 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                int nr = 0;
-                foreach (var item in db.BorrowedBooks)
-                    if (item.ReaderID == this.ReaderID)
-                        nr++;
-                return nr;
+                int i = 0;
+                foreach (var book in db.BorrowedBooks)
+                    if (book.ReaderID == this.ReaderID && book.ReturnDate == null)
+                        i++;
+                return i;
             }
         }
-
+    
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Account> Accounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

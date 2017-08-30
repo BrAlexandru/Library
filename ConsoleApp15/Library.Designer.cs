@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'c:\users\alexandru.bratu\documents\visual studio 2017\Projects\ConsoleApp15\ConsoleApp15\Library.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\alexandru.bratu\Desktop\Library\Library\ConsoleApp15\Library.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

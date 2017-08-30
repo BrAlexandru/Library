@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="LIBRARYModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="LIBRARYModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="AccountID" />
@@ -23,6 +23,7 @@
           <Property Name="BookAuthor" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="BookType" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="BookGenre" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="IsBorrowed" Type="bit" />
         </EntityType>
         <EntityType Name="BorrowedBooks">
           <Key>
@@ -33,6 +34,7 @@
           <Property Name="ReaderID" Type="int" Nullable="false" />
           <Property Name="BorrowedDate" Type="date" Nullable="false" />
           <Property Name="ExpectDate" Type="date" Nullable="false" />
+          <Property Name="ReturnDate" Type="date" />
         </EntityType>
         <EntityType Name="Readers">
           <Key>
@@ -140,8 +142,7 @@
             <End Role="BorrowedBooks" EntitySet="BorrowedBooks" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="LIBRARYModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -165,6 +166,7 @@
           <Property Name="BookType" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="BookGenre" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="BorrowedBooks" Relationship="Self.FK__BorrowedB__BookI__300424B4" FromRole="Books" ToRole="BorrowedBooks" />
+          <Property Name="IsBorrowed" Type="Boolean" />
         </EntityType>
         <EntityType Name="BorrowedBook">
           <Key>
@@ -177,6 +179,7 @@
           <Property Name="ExpectDate" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Book" Relationship="Self.FK__BorrowedB__BookI__300424B4" FromRole="BorrowedBooks" ToRole="Books" />
           <NavigationProperty Name="Reader" Relationship="Self.FK__BorrowedB__Reade__30F848ED" FromRole="BorrowedBooks" ToRole="Readers" />
+          <Property Name="ReturnDate" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="Reader">
           <Key>
@@ -315,6 +318,7 @@
           <EntitySetMapping Name="Books">
             <EntityTypeMapping TypeName="LIBRARYModel.Book">
               <MappingFragment StoreEntitySet="Books">
+                <ScalarProperty Name="IsBorrowed" ColumnName="IsBorrowed" />
                 <ScalarProperty Name="BookID" ColumnName="BookID" />
                 <ScalarProperty Name="BookName" ColumnName="BookName" />
                 <ScalarProperty Name="BookAuthor" ColumnName="BookAuthor" />
@@ -326,6 +330,7 @@
           <EntitySetMapping Name="BorrowedBooks">
             <EntityTypeMapping TypeName="LIBRARYModel.BorrowedBook">
               <MappingFragment StoreEntitySet="BorrowedBooks">
+                <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
                 <ScalarProperty Name="BorrowedBookID" ColumnName="BorrowedBookID" />
                 <ScalarProperty Name="BookID" ColumnName="BookID" />
                 <ScalarProperty Name="ReaderID" ColumnName="ReaderID" />

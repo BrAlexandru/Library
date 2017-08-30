@@ -18,6 +18,7 @@
     <Property Name="BookAuthor" Type="varchar" MaxLength="255" Nullable="false" />
     <Property Name="BookType" Type="varchar" MaxLength="255" Nullable="false" />
     <Property Name="BookGenre" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="IsBorrowed" Type="bit" />
   </EntityType>
   <EntityType Name="BorrowedBooks">
     <Key>
@@ -28,6 +29,7 @@
     <Property Name="ReaderID" Type="int" Nullable="false" />
     <Property Name="BorrowedDate" Type="date" Nullable="false" />
     <Property Name="ExpectDate" Type="date" Nullable="false" />
+    <Property Name="ReturnDate" Type="date" />
   </EntityType>
   <EntityType Name="Readers">
     <Key>

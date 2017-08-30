@@ -14,6 +14,7 @@
     <EntitySetMapping Name="Books">
       <EntityTypeMapping TypeName="LIBRARYModel.Book">
         <MappingFragment StoreEntitySet="Books">
+          <ScalarProperty Name="IsBorrowed" ColumnName="IsBorrowed" />
           <ScalarProperty Name="BookID" ColumnName="BookID" />
           <ScalarProperty Name="BookName" ColumnName="BookName" />
           <ScalarProperty Name="BookAuthor" ColumnName="BookAuthor" />
@@ -25,6 +26,7 @@
     <EntitySetMapping Name="BorrowedBooks">
       <EntityTypeMapping TypeName="LIBRARYModel.BorrowedBook">
         <MappingFragment StoreEntitySet="BorrowedBooks">
+          <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
           <ScalarProperty Name="BorrowedBookID" ColumnName="BorrowedBookID" />
           <ScalarProperty Name="BookID" ColumnName="BookID" />
           <ScalarProperty Name="ReaderID" ColumnName="ReaderID" />

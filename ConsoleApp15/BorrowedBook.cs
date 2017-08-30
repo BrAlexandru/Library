@@ -19,7 +19,10 @@ namespace ConsoleApp15
         public int ReaderID { get; set; }
         public System.DateTime BorrowedDate { get; set; }
         public System.DateTime ExpectDate { get; set; }
-    
+        public Nullable<System.DateTime> ReturnDate { get; set; }
+
+        
+
         public virtual Book Book { get; set; }
         public virtual Reader Reader { get; set; }
     }

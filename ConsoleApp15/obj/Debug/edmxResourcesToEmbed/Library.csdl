@@ -20,6 +20,7 @@
     <Property Name="BookType" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="BookGenre" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
     <NavigationProperty Name="BorrowedBooks" Relationship="Self.FK__BorrowedB__BookI__300424B4" FromRole="Books" ToRole="BorrowedBooks" />
+    <Property Name="IsBorrowed" Type="Boolean" />
   </EntityType>
   <EntityType Name="BorrowedBook">
     <Key>
@@ -32,6 +33,7 @@
     <Property Name="ExpectDate" Type="DateTime" Nullable="false" Precision="0" />
     <NavigationProperty Name="Book" Relationship="Self.FK__BorrowedB__BookI__300424B4" FromRole="BorrowedBooks" ToRole="Books" />
     <NavigationProperty Name="Reader" Relationship="Self.FK__BorrowedB__Reade__30F848ED" FromRole="BorrowedBooks" ToRole="Readers" />
+    <Property Name="ReturnDate" Type="DateTime" Precision="0" />
   </EntityType>
   <EntityType Name="Reader">
     <Key>
