@@ -12,12 +12,11 @@ namespace ConsoleApp15
         {
             
 
-
             var librarian = Librarian.Instance("Admin", "pass");
 
             var login = new Login(librarian);
 
-            login.Start();
+            login.Menu();
             
 
 

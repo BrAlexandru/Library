@@ -16,18 +16,44 @@ namespace ConsoleApp15
             _librarian = librarian;
         }
 
-
-        public void Start()
+        public void Menu()
         {
-            ConsoleKeyInfo g;
+            var options = new Dictionary<string, Action>()
+            {
+                {"D1",()=>Start() },
+                {"D2",()=>ForgotPass() },
+                {"D3",()=>AddReader() }
+
+            };
+            ConsoleKeyInfo key;
             do
             {
+                
+                Console.WriteLine("1.Login");
+                Console.WriteLine("2.Forgot my password");
+                Console.WriteLine("3.Create an account");
+               
+                key = Console.ReadKey();
+                Console.WriteLine();
 
-                Console.WriteLine("Press Escape to stop");
-                g = Console.ReadKey();
+                Action value = null;
+                if (options.TryGetValue(key.Key.ToString(), out value))
+                {
+                    value();
+                }
+                
+                else Console.WriteLine("Command does not exist");
 
-                if (g.Key == ConsoleKey.Escape)
-                    break;
+                Console.WriteLine();
+            } while (key.Key != ConsoleKey.Escape);
+
+
+        }
+        
+
+
+        private void Start()
+        {
                 Console.Write("Username:");
                 string user = Console.ReadLine();
                 Console.Write("Password:");
@@ -36,6 +62,7 @@ namespace ConsoleApp15
                 if((user==_librarian.AdminID) && (pass==_librarian.Password))
                 {
                     AdminInstruction();
+
                 }
                 else
                 {
@@ -48,12 +75,16 @@ namespace ConsoleApp15
                                 ReaderInstruction(account.ReaderID);
                                 ok = true;
                             }
-                        if (ok == false)
-                            Console.WriteLine("Wrong username and password");
+                    if (ok == false)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Wrong username and password");
+                        Console.ResetColor();
+                    }
                     }
                 }
-
-            } while (g.Key != ConsoleKey.Escape);
+              
+            
         }
 
         #region Admin
@@ -65,19 +96,19 @@ namespace ConsoleApp15
             var adminInstruction = new Dictionary<string, Action>()
             {
                 {"A",()=>AddBook() },
-                {"B",()=>AddReader() },
-                {"C",()=>RemoveBook() },
-                {"D",()=>RemoveReader() },
-                {"E",()=>DisplayBooks() },
-                {"F",()=>DisplayReaders() },
-                {"G",()=>SearchBook() },
-                {"H",()=>SearchReader() },
-                {"I",()=>LateReaders() },
-                {"J",()=>DisplayBorrowed() },
-                {"K",()=>MaxBooks() },
-                {"L",()=>Top() },
-                {"M",()=>HistoryOfTheBook() },
-                {"N",()=>HistroyOfTheReader() }
+                {"B",()=>RemoveBook() },
+                {"C",()=>RemoveReader() },
+                {"D",()=>DisplayBooks() },
+                {"E",()=>DisplayReaders() },
+                {"F",()=>SearchBook() },
+                {"G",()=>SearchReader() },
+                {"H",()=>LateReaders() },
+                {"I",()=>DisplayBorrowed() },
+                {"J",()=>MaxBooks() },
+                {"K",()=>Top() },
+                {"L",()=>HistoryOfTheBook() },
+                {"M",()=>HistroyOfTheReader() },
+                {"N",()=>ReaderNrBooks() }
             };
             
             
@@ -87,19 +118,19 @@ namespace ConsoleApp15
             {
                 Console.WriteLine();
                 Console.WriteLine("A.Add book");
-                Console.WriteLine("B.Add reader");
-                Console.WriteLine("C.Remove book");
-                Console.WriteLine("D.Remove reader");
-                Console.WriteLine("E.Display all books");
-                Console.WriteLine("F.Display all readers");
-                Console.WriteLine("G.Search book");
-                Console.WriteLine("H.Search reader");
-                Console.WriteLine("I.Display the readers who are late");
-                Console.WriteLine("J.Display all the borrowed books");
-                Console.WriteLine("K.The readers with the most borrowed books");
-                Console.WriteLine("L.Top 5 borrowed books");
-                Console.WriteLine("M.Display history of book");
-                Console.WriteLine("N.Display history of reader");
+                Console.WriteLine("B.Remove book");
+                Console.WriteLine("C.Remove reader");
+                Console.WriteLine("D.Display all books");
+                Console.WriteLine("E.Display all readers");
+                Console.WriteLine("F.Search book");
+                Console.WriteLine("G.Search reader");
+                Console.WriteLine("H.Display the readers who are late");
+                Console.WriteLine("I.Display all the borrowed books");
+                Console.WriteLine("J.The readers with the most borrowed books");
+                Console.WriteLine("K.Top 5 borrowed books");
+                Console.WriteLine("L.Display history of book");
+                Console.WriteLine("M.Display history of reader");
+                Console.WriteLine("N.Display the readers and the number of books they have");
 
                 key = Console.ReadKey();
                 Console.WriteLine();
@@ -113,7 +144,6 @@ namespace ConsoleApp15
 
                 Console.WriteLine();  
             } while (key.Key != ConsoleKey.Escape);
-
 
         }
 
@@ -176,88 +206,7 @@ namespace ConsoleApp15
 
         }
 
-        private void AddReader()
-        {
-            try
-            {
-                Console.Write("Name of the reader:");
-                string name = Console.ReadLine();
-                if(name==string.Empty)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input");
-                    Console.ResetColor();
-                    return;
-                }
-
-                Console.Write("Phone of the reader:");
-                long phone = long.Parse(Console.ReadLine());
-                if(phone<100000000 || phone>9999999999)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input");
-                    Console.ResetColor();
-                    return;
-                }
-
-                Console.Write("Email of the reader:");
-                string email = Console.ReadLine();
-                if(email==string.Empty)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input");
-                    Console.ResetColor();
-                    return;
-                }
-
-                Console.Write("Address of the reader:");
-                string address = Console.ReadLine();
-                if(address==string.Empty)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input");
-                    Console.ResetColor();
-                    return;
-                }
-
-                using (var db = new LIBRARYEntities())
-                {
-
-                    var reader = new Reader
-                    {
-                        ReaderName = name,
-                        ReaderPhone = phone,
-                        ReaderEmail = email,
-                        ReaderAddress = address
-                    };
-
-                    db.Readers.Add(reader);
-
-                    var account = new Account
-                    {
-                        AccountUsername = name,
-                        AccountPassword = name,
-                        ReaderID=reader.ReaderID
-                    };
-
-                    db.Accounts.Add(account);
-
-                    db.SaveChanges();
-
-                }
-
-            }
-            catch(FormatException)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid input");
-                Console.ResetColor();
-                return;
-            }
-        }
-
-    
-
+      
 
         private void RemoveBook()
         {
@@ -678,6 +627,29 @@ namespace ConsoleApp15
             }
         }
 
+        private void ReaderNrBooks()
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                var readers = db.BorrowedBooks.Where(x => x.ReturnDate == null)
+                                            .Join(db.Readers,
+                                                  bbook => bbook.ReaderID,
+                                                  reader => reader.ReaderID,
+                                                  (bbook, reader) => new { BBook = bbook, Reader = reader })
+                                            .GroupBy(x => x.Reader.ReaderName)
+                                            .Select(y => new { y.Key, Count=y.Count() }).ToList();
+                if(readers.Count==0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Nobody have any book borrowed");
+                    Console.ResetColor();
+                }
+
+                foreach (var item in readers)
+                    Console.WriteLine($"{item.Key} {item.Count}");
+
+            }
+        }
 
         #endregion
 
@@ -701,7 +673,9 @@ namespace ConsoleApp15
                                                     book => book.BookID,
                                                     (x, book) => new { X = x, Book = book })
                                               .Select(y => new { y.Book.BookName, y.Book.BookAuthor, y.X.Count })
-                                              .OrderByDescending(x => x.Count).ToList();
+                                              .OrderByDescending(x => x.Count)
+                                              .Take(5)
+                                              .ToList();
                     if(books.Count==0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -710,7 +684,7 @@ namespace ConsoleApp15
                         return;
                     }
 
-                    foreach (var book in books.Take(5))
+                    foreach (var book in books)
                         Console.WriteLine($"{book.BookName,-10} by {book.BookAuthor,-10} was borrowed {book.Count,-3} times");
                 }
                 
@@ -724,8 +698,174 @@ namespace ConsoleApp15
             }
         }
 
-        
+        private void ForgotPass()
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                Console.Write("Username:");
+                string user = Console.ReadLine();
 
+                try
+                {
+                    var account = db.Accounts.Where(x => x.AccountUsername == user).Single();
+
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                    Console.Write("Phone Number:");
+                    if(long.Parse(Console.ReadLine())!=reader.ReaderPhone)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Wrong");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    Console.Write("Email:");
+                    if(Console.ReadLine()!=reader.ReaderEmail)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Wrong");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    Console.Write("Address:");
+                    if(Console.ReadLine()!=reader.ReaderAddress)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Wrong");
+                        Console.ResetColor();
+                        return;
+                    }
+
+                    Console.Write("New password:");
+                    string pass = Console.ReadLine();
+
+                    if(pass==string.Empty)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input");
+                        Console.ResetColor();
+                        return;
+                    }
+                    
+
+                    account.AccountPassword = pass;
+
+                    db.SaveChanges();
+
+                    
+
+
+                    
+                }
+                catch(FormatException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Wrong");
+                    Console.ResetColor();
+                }
+                catch(Exception)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No account with the given username");
+                    Console.ResetColor();
+                }
+                
+                
+
+                
+                
+            }
+        }
+
+        private void AddReader()
+        {
+            try
+            {
+                Console.Write("Name of the reader:");
+                string name = Console.ReadLine();
+                if (name == string.Empty)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+
+                Console.Write("Phone of the reader:");
+                long phone = long.Parse(Console.ReadLine());
+                if (phone < 100000000 || phone > 9999999999)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+
+                Console.Write("Email of the reader:");
+                string email = Console.ReadLine();
+                if (email == string.Empty)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+
+                Console.Write("Address of the reader:");
+                string address = Console.ReadLine();
+                if (address == string.Empty)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid input");
+                    Console.ResetColor();
+                    return;
+                }
+
+                using (var db = new LIBRARYEntities())
+                {
+
+                    var reader = new Reader
+                    {
+                        ReaderName = name,
+                        ReaderPhone = phone,
+                        ReaderEmail = email,
+                        ReaderAddress = address
+                    };
+                    foreach (var item in db.Readers)
+                        if (reader.ReaderName == item.ReaderName)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Username already used");
+                            Console.ResetColor();
+                            return;
+                        }
+                    db.Readers.Add(reader);
+
+                    var account = new Account
+                    {
+                        AccountUsername = name,
+                        AccountPassword = name,
+                        ReaderID = reader.ReaderID
+                    };
+
+                    db.Accounts.Add(account);
+
+                    db.SaveChanges();
+
+                }
+
+            }
+            catch (FormatException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid input");
+                Console.ResetColor();
+                return;
+            }
+
+        }
 
 
 
@@ -800,6 +940,12 @@ namespace ConsoleApp15
                         Console.WriteLine("Wrong input");
                         Console.ResetColor();
                         return;
+                    }
+                    if(pass==account.AccountPassword)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("New password can't be the same password");
+                        Console.ResetColor();
                     }
                     account.AccountPassword = pass;
 
