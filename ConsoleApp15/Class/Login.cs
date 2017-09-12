@@ -295,10 +295,6 @@ namespace ConsoleApp15
                             db.BorrowedBooks.Remove(book);
                         }
 
-
-                        
-                    
-
                     db.SaveChanges();
                 }
 
@@ -631,22 +627,14 @@ namespace ConsoleApp15
         {
             using (var db = new LIBRARYEntities())
             {
-                var readers = db.BorrowedBooks.Where(x => x.ReturnDate == null)
-                                            .Join(db.Readers,
-                                                  bbook => bbook.ReaderID,
-                                                  reader => reader.ReaderID,
-                                                  (bbook, reader) => new { BBook = bbook, Reader = reader })
-                                            .GroupBy(x => x.Reader.ReaderName)
-                                            .Select(y => new { y.Key, Count=y.Count() }).ToList();
-                if(readers.Count==0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Nobody have any book borrowed");
-                    Console.ResetColor();
-                }
 
-                foreach (var item in readers)
-                    Console.WriteLine($"{item.Key} {item.Count}");
+                var readers = db.Readers.ToList()
+                                      .Where(x => x.NrOfBooks() > 0)
+                                      .Select(x => new { x.ReaderName, Nr = x.NrOfBooks() })
+                                      .OrderByDescending(x => x.Nr).ThenBy(x=>x.ReaderName);
+                
+                foreach (var reader in readers)
+                    Console.WriteLine($"{reader.ReaderName} {reader.Nr}");
 
             }
         }
