@@ -1,0 +1,16 @@
+﻿.display table{
+    border-collapse:collapse;
+}
+.display table{
+    border:1px solid black;
+}
+.display th {
+    border: 1px solid black;
+}
+.display td {
+    border: 1px solid black;
+}
+.display th{
+    background-color:black;
+    color:white;
+}

@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "AddBook";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<form  action="/Admin/AddBook" method="post" >
+    <table>
+        <tr>
+            <td>Name of the Book:</td>
+            <td><input type="text" name="name"  required/></td>
+        </tr>
+        <tr>
+            <td>Name of the Author:</td>
+            <td><input type="text" name="author" required/></td>
+        </tr>
+        <tr>
+            <td>Type of the book:</td>
+            <td><input type="text" name="type" required/></td>
+        </tr>
+        <tr>
+            <td>Genre of the Book:</td>
+            <td><input type="text" name="genre" required/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Add book" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">@ViewBag.Message</td>
+        </tr>
+    </table>
+</form>
+

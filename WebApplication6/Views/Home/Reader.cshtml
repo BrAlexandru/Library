@@ -1,0 +1,31 @@
+﻿@model int
+@{
+    ViewBag.Title = "Reader";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/Reader/css")
+
+</head>
+
+<body>
+    <header>
+        <a href="/Home"><input type="submit" value="Back to login" /></a>
+            <nav>
+                <ul>
+                    <li><a href="/Reader/ChangePass?id=@Model">Change Password</a></li>
+                    <li><a href="/Reader/SearchBook?id=@Model">Search Book</a></li>
+                    <li><a href="/Reader/DisplayBooks?id=@Model">Display Books</a></li>
+                    <li><a href="/Reader/BorrowBook?id=@Model">Borrow Book</a></li>
+                    <li><a href="/Reader/ReturnBook?id=@Model">Return Book</a></li>
+                    <li><a href="/Reader/BorrowedBooks?id=@Model">Borrowed Books</a></li>
+                    <li><a href="/Reader/Top5?id=@Model">Top 5</a></li>
+                    <li><a href="/Reader/HistoryOfTheReader?id=@Model">History of the reader</a></li>
+                </ul>
+            </nav>
+</header>
+</body>
+</html>

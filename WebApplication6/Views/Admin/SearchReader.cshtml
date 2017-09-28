@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "SearchReader";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+
+}
+
+<form method="post" action="/Admin/SearchReader">
+    <table>
+        <tr>
+            <td>Name of the reader:</td>
+            <td><input type="text" name="name" required/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Search" /></td>
+        </tr>
+        <tr>
+            <td colspan="5">@ViewBag.Message</td>
+        </tr>
+    </table>
+</form>
+

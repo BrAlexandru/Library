@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WebApplication6.Models.ReaderHistory>
+
+@{
+    ViewBag.Title = "HistoryOfTheReaderResult";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<form action="/Admin/HistoryOfTheReader" method="post">
+    <table>
+        <tr>
+            <td>Code of the reader:</td>
+            <td><input type="number" name="code" required/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="submit" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">@ViewBag.Message</td>
+        </tr>
+    </table>
+</form>
+<div class="display">
+    <table>
+        <tr>
+            <th>Reader name</th>
+            <th>Book name</th>
+            <th>Borrowed date</th>
+            <th>Date</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            if (item.ReturnDate != null)
+            {
+                <tr>
+                    <td>@item.ReaderName</td>
+                    <td>@item.BookName</td>
+                    <td>@item.BorrowedDate.ToString("dd MMM yyyy")</td>
+                    <td>@item.ReturnDate.Value.ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@item.ReaderName</td>
+                    <td>@item.BookName</td>
+                    <td>@item.BorrowedDate.ToString("dd MMM yyyy")</td>
+                    <td>expected untill  @item.ExpectDate.ToString("dd MMM yyyy")</td>
+
+                </tr>
+            }
+        }
+    </table>
+</div>
+

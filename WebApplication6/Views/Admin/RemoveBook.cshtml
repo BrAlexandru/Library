@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "RemoveBook";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<form action="/Admin/RemoveBook" method="post">
+    <table>
+        <tr>
+            <td>Code of the book:</td>
+            <td><input type="number" name="code" required/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Remove book" /></td>
+        </tr>
+        <td colspan="2">@ViewBag.Message</td>
+    </table>
+
+</form>
+

@@ -1,0 +1,26 @@
+﻿@model IEnumerable<WebApplication6.Models.Borrowed>
+
+@{
+    ViewBag.Title = "BorrowedBooksResult";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+<div class="display">
+    <table>
+        <tr>
+            <th>Reader name</th>
+            <th>Book name</th>
+            <th>Borrowed date</th>
+            <th>Expected date</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ReaderName</td>
+                <td>@item.BookName</td>
+                <td>@item.BorrowedDate.ToString("dd MMM yyyy")</td>
+                <td>@item.ExpectDate.ToString("dd MMM yyyy")</td>
+            </tr>
+        }
+    </table>
+</div>
+

@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+<!doctype html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    @Styles.Render("~/Content/Login/css")
+    
+</head>
+<body>
+    
+    <form action="/Home/Login" method="post" >
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" name="user" required/></td>
+            </tr>
+            <tr>
+                <td>Passwword:</td>
+                <td><input  type="password" name="pass" required/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" name="btnSubmit" value="Login" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">@ViewBag.Message</td>
+            </tr>
+            <tr>
+                <td colspan="2"><a href="/Home/CreateAccount">Create new account</a></td>
+
+            </tr>
+            <tr>
+                <td colspan="2"><a href="/Home/ForgotPass">Forgot my password</a></td>
+            </tr>
+        </table>
+    </form>
+</body>

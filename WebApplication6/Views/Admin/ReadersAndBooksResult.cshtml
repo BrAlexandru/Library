@@ -1,0 +1,21 @@
+﻿@model IEnumerable<WebApplication6.Models.ReaderAndNr>
+
+@{
+    ViewBag.Title = "ReadersAndBooksResult";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+<div class="display">
+    <table>
+        <tr>
+            <th>Reader name</th>
+            <th>Number of books</th>
+        </tr>
+        @foreach (var reader in Model)
+        {
+            <tr>
+                <td>@reader.ReaderName</td>
+                <td>@reader.Count</td>
+            </tr>
+        }
+    </table>
+</div>

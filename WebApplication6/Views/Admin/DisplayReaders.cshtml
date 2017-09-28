@@ -1,0 +1,27 @@
+﻿@model IEnumerable<WebApplication6.Reader>
+@{
+    ViewBag.Title = "DisplayReaders";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+<div class="display">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+        </tr>
+        @foreach (var reader in Model)
+        {
+            <tr>
+                <td>@reader.ReaderID</td>
+                <td>@reader.ReaderName</td>
+                <td>@reader.ReaderPhone</td>
+                <td>@reader.ReaderEmail</td>
+                <td>@reader.ReaderAddress</td>
+            </tr>
+        }
+    </table>
+</div>
+

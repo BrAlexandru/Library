@@ -1,0 +1,72 @@
+﻿@model WebApplication6.Models.Readers.ReaderModel
+@{
+    ViewBag.Title = "HistoryOfTheReader";
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/Reader/css")
+    @Styles.Render("~/Content/Tables/css")
+    </head>
+<body>
+    <header>
+        <a href="/Home"><input type="submit" value="Back to login" /></a>
+        <nav>
+            <ul>
+                <li><a href="/Reader/ChangePass?id=@Model.Id">Change Password</a></li>
+                <li><a href="/Reader/SearchBook?id=@Model.Id">Search Book</a></li>
+                <li><a href="/Reader/DisplayBooks?id=@Model.Id">Display Books</a></li>
+                <li><a href="/Reader/BorrowBook?id=@Model.Id">Borrow Book</a></li>
+                <li><a href="/Reader/ReturnBook?id=@Model.Id">Return Book</a></li>
+                <li><a href="/Reader/BorrowedBooks?id=@Model.Id">Borrowed Books</a></li>
+                <li><a href="/Reader/Top5?id=@Model.Id">Top 5</a></li>
+                <li><a href="/Reader/HistoryOfTheReader?id=@Model.Id">History of the reader</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    @if(Model.list.Count==0)
+    {
+        <h3>@ViewBag.Message</h3>
+    }
+    else
+    {
+        <div class="display">
+            <table>
+                <tr>
+                    <th>Reader name</th>
+                    <th>Book name</th>
+                    <th>Borrowed date</th>
+                    <th>Date</th>
+                </tr>
+                @foreach (var item in Model.list)
+                {
+                    if (item.ReturnDate != null)
+                    {
+                        <tr>
+                            <td>@item.ReaderName</td>
+                            <td>@item.BookName</td>
+                            <td>@item.BorrowedDate.ToString("dd MMM yyyy")</td>
+                            <td>@item.ReturnDate.Value.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@item.ReaderName</td>
+                            <td>@item.BookName</td>
+                            <td>@item.BorrowedDate.ToString("dd MMM yyyy")</td>
+                            <td>expected untill  @item.ExpectDate.ToString("dd MMM yyyy")</td>
+
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    }
+
+</body>
+</html>

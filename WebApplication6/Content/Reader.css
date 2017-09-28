@@ -1,0 +1,33 @@
+﻿
+nav {
+    float: left;
+    width: 100%;
+    background-color: gray;
+    color: white;
+}
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    nav li {
+        float: left;
+        width: 25%;
+    }
+
+        nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            border: 1px solid black;
+            text-decoration: none;
+            height: 20px;
+        }
+
+            nav li a:hover {
+                background: red;
+            }

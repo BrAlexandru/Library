@@ -1,0 +1,58 @@
+﻿@model IEnumerable<WebApplication6.Book>
+@{
+    ViewBag.Title = "SearchBook";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+
+<form method="post" action="/Admin/SearchBook">
+    <table>
+        <tr>
+            <td>Name of the book:</td>
+            <td><input type="text" name="name" /></td>
+        </tr>
+        <tr>
+            <td>Name of the author:</td>
+            <td><input type="text" name="author" /></td>
+        </tr>
+        <tr>
+            <td>Type of the book:</td>
+            <td><input type="text" name="type" /></td>
+        </tr>
+        <tr>
+            <td>Genre of the book:</td>
+            <td><input type="text" name="genre" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Search" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">@ViewBag.Message</td>
+        </tr>
+    </table>
+    <div class="display">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Type</th>
+                <th>Genre</th>
+                <th>IsBorrowed</th>
+            </tr>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.BookID</td>
+                    <td>@book.BookName</td>
+                    <td>@book.BookAuthor</td>
+                    <td>@book.BookType</td>
+                    <td>@book.BookGenre</td>
+                    <td>@book.IsBorrowed</td>
+                </tr>
+            }
+        </table>
+    </div>
+
+</form>
+

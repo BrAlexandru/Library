@@ -1,0 +1,38 @@
+﻿@model IEnumerable<WebApplication6.Models.Top>
+
+@{
+    ViewBag.Title = "Top5Result";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<form action="/Admin/Top5" method="post">
+    <table>
+        <tr>
+            <td>Year:</td>
+            <td><input type="number" name="year" required/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="submit" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">@ViewBag.Message</td>
+        </tr>
+    </table>
+</form>
+<div class="display">
+    <table>
+        <tr>
+            <th>Book name</th>
+            <th>Book author</th>
+            <th>Count</th>
+        </tr>
+        @foreach (var book in Model)
+        {
+    <tr>
+        <td>@book.BookName</td>
+        <td>@book.BookAuthor</td>
+        <td>@book.Count</td>
+    </tr>
+        }
+    </table>
+</div>

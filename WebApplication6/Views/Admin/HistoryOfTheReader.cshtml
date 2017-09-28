@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "HistoryOfTheReader";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+
+<form action="/Admin/HistoryOfTheReader" method="post">
+    <table>
+        <tr>
+            <td>Code of the reader:</td>
+            <td><input type="number" name="code" required /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="submit" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">@ViewBag.Message</td>
+        </tr>
+    </table>
+</form>
+

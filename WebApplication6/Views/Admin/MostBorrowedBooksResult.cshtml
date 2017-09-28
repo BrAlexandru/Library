@@ -1,0 +1,27 @@
+﻿@model WebApplication6.Reader
+
+@{
+    ViewBag.Title = "MostBorrowedBooksResult";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+<div class="display">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Number of books</th>
+        </tr>
+        <tr>
+            <td>@Model.ReaderID</td>
+            <td>@Model.ReaderName</td>
+            <td>@Model.ReaderPhone</td>
+            <td>@Model.ReaderEmail</td>
+            <td>@Model.ReaderAddress</td>
+            <td>@Model.NrOfBooks()</td>
+        </tr>
+    </table>
+</div>
+

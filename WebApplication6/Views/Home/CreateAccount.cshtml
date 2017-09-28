@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "CreateAccount";
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Create account</title>
+</head>
+<body>
+    <div>
+        <form action="/Home/CreateAccount" method="post">
+            <table>
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" name="name" required /></td>
+                </tr>
+                <tr>
+                    <td>Phone number:</td>
+                    <td><input type="number" name="phone"  required /></td>
+                </tr>
+                <tr>
+                    <td>E-mail:</td>
+                    <td><input type="text" name="email" required /></td>
+                </tr>
+                <tr>
+                    <td>Address:</td>
+                    <td><input type="text" name="address" required /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Create account" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">@ViewBag.Message</td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

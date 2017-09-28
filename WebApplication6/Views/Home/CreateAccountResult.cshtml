@@ -1,0 +1,32 @@
+﻿@model WebApplication6.Account
+
+@{
+    ViewBag.Title = "CreateAccountResult";
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Create account</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th colspan="2">Account information</th>
+        </tr>
+        <tr>
+            <td>Account username:</td>
+            <td>@Model.AccountUsername</td>
+        </tr>
+        <tr>
+            <td>Account password:</td>
+            <td>@Model.AccountPassword</td>
+        </tr>
+        <tr>
+            <td colspan="2"><a href="/Home"><button type="button">Back to login</a></td>
+        </tr>
+    </table>
+</body>
+</html>
+

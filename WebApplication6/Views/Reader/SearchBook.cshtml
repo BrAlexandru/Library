@@ -1,0 +1,57 @@
+﻿@model int
+@{
+    ViewBag.Title = "SearchBook";
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/Reader/css")
+</head>
+<body>
+    <header>
+        <a href="/Home"><input type="submit" value="Back to login" /></a>
+        <nav>
+            <ul>
+                <li><a href="/Reader/ChangePass?id=@Model">Change Password</a></li>
+                <li><a href="/Reader/SearchBook?id=@Model">Search Book</a></li>
+                <li><a href="/Reader/DisplayBooks?id=@Model">Display Books</a></li>
+                <li><a href="/Reader/BorrowBook?id=@Model">Borrow Book</a></li>
+                <li><a href="/Reader/ReturnBook?id=@Model">Return Book</a></li>
+                <li><a href="/Reader/BorrowedBooks?id=@Model">Borrowed Books</a></li>
+                <li><a href="/Reader/Top5?id=@Model">Top 5</a></li>
+                <li><a href="/Reader/HistoryOfTheReader?id=@Model">History of the reader</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <form method="post" action="/Reader/SearchBook?id=@Model">
+        <table>
+            <tr>
+                <td>Name of the book:</td>
+                <td><input type="text" name="name"  /></td>
+            </tr>
+            <tr>
+                <td>Name of the author:</td>
+                <td><input type="text" name="author"  /></td>
+            </tr>
+            <tr>
+                <td>Type of the book:</td>
+                <td><input type="text" name="type"  /></td>
+            </tr>
+            <tr>
+                <td>Genre of the book:</td>
+                <td><input type="text" name="genre"  /></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Search book"</td>
+            </tr>
+            <tr>
+                <td colspan="2">@ViewBag.Message</td>
+            </tr>
+        </table>
+    </form>
+
+</body>
+</html>

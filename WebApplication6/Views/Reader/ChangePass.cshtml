@@ -1,0 +1,50 @@
+﻿@model int
+@{
+    ViewBag.Title = "ChangePass";
+
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/Reader/css")
+</head>
+<body>
+    <header>
+        <a href="/Home"><input type="submit" value="Back to login" /></a>
+        <nav>
+            <ul>
+                <li><a href="/Reader/ChangePass?id=@Model">Change Password</a></li>
+                <li><a href="/Reader/SearchBook?id=@Model">Search Book</a></li>
+                <li><a href="/Reader/DisplayBooks?id=@Model">Display Books</a></li>
+                <li><a href="/Reader/BorrowBook?id=@Model">Borrow Book</a></li>
+                <li><a href="/Reader/ReturnBook?id=@Model">Return Book</a></li>
+                <li><a href="/Reader/BorrowedBooks?id=@Model">Borrowed Books</a></li>
+                <li><a href="/Reader/Top5?id=@Model">Top 5</a></li>
+                <li><a href="/Reader/HistoryOfTheReader?id=@Model">History of the reader</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <form action="/Reader/ChangePass?id=@Model" method="post">
+        <table>
+            <tr>
+                <td>Current password:</td>
+                <td><input type="text" name="current" required /></td>
+            </tr>
+            <tr>
+                <td>New password:</td>
+                <td><input type="text" name="newPass" required /></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Change password" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">@ViewBag.Message</td>
+            </tr>
+        </table>
+    </form>
+
+</body>
+</html>
