@@ -15,10 +15,7 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult AddBook(string name,string author,string type,string genre)
         {
-            ViewBag.Message = string.Empty;
             
-
-
             using (var db = new LIBRARYEntities())
             {
                 var book = new Book
@@ -42,7 +39,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult RemoveBook(int code)
         {
-            ViewBag.Message = string.Empty;
             
             using (var db = new LIBRARYEntities())
             {
@@ -61,7 +57,7 @@ namespace WebApplication6.Controllers
                 }
                 catch(Exception)
                 {
-                    ViewBag.Message = "Invalid input";
+                    ViewBag.Message = "No book with the given code";
                     
                 }
             }
@@ -74,10 +70,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult RemoveReader(int code)
         {
-            ViewBag.Message = string.Empty;
-
-            
-
             using (var db = new LIBRARYEntities())
             {
                 try
@@ -115,8 +107,11 @@ namespace WebApplication6.Controllers
         {
             using (var db = new LIBRARYEntities())
             {
+                if(db.Books.Count()==0)
+                {
+                    ViewBag.Message = "No books to display";
+                }
                 return View(db.Books.ToList());
-
             }
         }
 
@@ -124,6 +119,10 @@ namespace WebApplication6.Controllers
         {
             using (var db = new LIBRARYEntities())
             {
+                if(db.Readers.Count()==0)
+                {
+                    ViewBag.Message = "No readers to display";
+                }
                 return View(db.Readers.ToList());
             }
         }
@@ -209,7 +208,6 @@ namespace WebApplication6.Controllers
         }
         public ActionResult BorrowedBooks()
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
                 var borrowed = db.BorrowedBooks.Where(x => x.ReturnDate == null)
@@ -235,7 +233,6 @@ namespace WebApplication6.Controllers
         }
         public ActionResult MostBorrowedBooks()
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
                 if(db.BorrowedBooks.Count()==0)
@@ -255,7 +252,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult Top5(int year)
         {
-            ViewBag.Message = string.Empty;
             
             using (var db = new LIBRARYEntities())
             {
@@ -286,7 +282,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult HistoryOfTheBook(int code)
         {
-            ViewBag.Message = string.Empty;
             
             using (var db = new LIBRARYEntities())
             {
@@ -301,8 +296,9 @@ namespace WebApplication6.Controllers
                                                     reader => reader.ReaderID,
                                                     (bbook, reader) => new { BBook = bbook, Reader = reader })
                                               .Select(y => new { y.Reader.ReaderName, y.BBook.BorrowedDate, y.BBook.ReturnDate, y.BBook.ExpectDate })
-                                              .OrderBy(x => x.BorrowedDate).ToList()
-                                              .Select(x => new Models.BookHistory { BookName = book.BookName, ReaderName = x.ReaderName, BorrowedDate = x.BorrowedDate, ExpectDate = x.ExpectDate, ReturnDate = x.ReturnDate });
+                                              .ToList()
+                                              .Select(x => new Models.BookHistory { BookName = book.BookName, ReaderName = x.ReaderName, BorrowedDate = x.BorrowedDate, ExpectDate = x.ExpectDate, ReturnDate = x.ReturnDate })
+                                              .OrderBy(x => x.BorrowedDate);
                     if(books.Count()==0)
                     {
                         ViewBag.Message = $"{book.BookName} was never borrowed";
@@ -324,7 +320,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult HistoryOfTheReader(int code)
         {
-            ViewBag.Message = string.Empty;
             
             using (var db = new LIBRARYEntities())
             {
@@ -357,7 +352,6 @@ namespace WebApplication6.Controllers
         }
         public ActionResult ReadersAndBooks()
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
                 var readers = db.Readers.ToList()

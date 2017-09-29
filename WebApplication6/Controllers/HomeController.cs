@@ -18,7 +18,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult Login(string user, string pass)
         {
-            ViewBag.Message = string.Empty;
             if (user == "Admin" && pass == "pass")
                 return View("Admin");
             else
@@ -34,14 +33,6 @@ namespace WebApplication6.Controllers
                 }
             }
         }
-        public ActionResult Admin()
-        {
-            return View("Admin");
-        }
-        public ActionResult Reader()
-        {
-            return View("Reader");
-        }
 
         public ActionResult CreateAccount()
         {
@@ -50,7 +41,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult CreateAccount(string name,long phone,string email,string address)
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
 
@@ -93,7 +83,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult ForgotPass(string name,long phone,string email,string address,string newPass)
         {
-            ViewBag.Message = string.Empty;
 
             try
             {

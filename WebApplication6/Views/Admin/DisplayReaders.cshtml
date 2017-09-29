@@ -3,6 +3,8 @@
     ViewBag.Title = "DisplayReaders";
     Layout = "~/Views/Shared/AdminLayout.cshtml";
 }
+@if (Model.Count() > 0)
+{
 <div class="display">
     <table>
         <tr>
@@ -24,4 +26,9 @@
         }
     </table>
 </div>
+}
+else
+{
+    <h3>@ViewBag.Message</h3>
+}
 

@@ -15,28 +15,35 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult ChangePass(int id,string current,string newPass)
         {
-            ViewBag.Message = string.Empty;
 
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-
-                if(current!=account.AccountPassword)
+                try
                 {
-                    ViewBag.Message = "Wrong password";
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
+
+                    if (current != account.AccountPassword)
+                    {
+                        ViewBag.Message = "Wrong password";
+                        return View(id);
+                    }
+                    if (newPass == current)
+                    {
+                        ViewBag.Message = "New password can't be the old password";
+                        return View(id);
+                    }
+
+                    account.AccountPassword = newPass;
+
+                    db.SaveChanges();
+
                     return View(id);
                 }
-                if(newPass==current)
+                catch(Exception)
                 {
-                    ViewBag.Message = "New password can't be the old password";
-                    return View(id);
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
                 }
-
-                account.AccountPassword = newPass;
-
-                db.SaveChanges();
-
-                return View(id);
             }
 
         }
@@ -48,7 +55,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult SearchBook(int id,string name,string author,string type,string genre)
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
                 var books = new List<Book>();
@@ -115,6 +121,7 @@ namespace WebApplication6.Controllers
         {
             using (var db = new LIBRARYEntities())
             {
+                try { 
                 var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
                 var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
@@ -151,7 +158,12 @@ namespace WebApplication6.Controllers
 
                 };
                 return View(model);
-
+                }
+                catch(Exception)
+                {
+                    ViewBag.Message = "No account with the give id";
+                    return View("Login");
+                }
             }
         }
         public ActionResult BorrowBook(int id)
@@ -161,62 +173,68 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult BorrowBook(int id,int code)
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
-
-                if(reader.NrOfBooks()>=4)
-                {
-                    ViewBag.Message = "Can't borrow more books";
-                    return View(id);
-                }
-
-                var books = db.Books.Where(x => x.IsBorrowed == false).ToList();
-
-                if(books.Count==0)
-                {
-                    ViewBag.Message = "No books to borrow";
-                    return View(id);
-                }
-
-                if(code<=0)
-                {
-                    ViewBag.Message = "Invalid input";
-                    return View(id);
-                }
                 try
                 {
-                    var book = books.Where(x => x.BookID == code).Single();
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
-                    var bbook = new BorrowedBook
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                    if (reader.NrOfBooks() >= 4)
                     {
-                        BookID = book.BookID,
-                        ReaderID = reader.ReaderID,
-                        BorrowedDate = DateTime.Now,
-                        ExpectDate = DateTime.Now.AddMonths(1)
-                    };
+                        ViewBag.Message = "Can't borrow more books";
+                        return View(id);
+                    }
+
+                    var books = db.Books.Where(x => x.IsBorrowed == false).ToList();
+
+                    if (books.Count == 0)
+                    {
+                        ViewBag.Message = "No books to borrow";
+                        return View(id);
+                    }
+
+                    if (code <= 0)
+                    {
+                        ViewBag.Message = "Invalid input";
+                        return View(id);
+                    }
+                    try
+                    {
+                        var book = books.Where(x => x.BookID == code).Single();
+
+                        var bbook = new BorrowedBook
+                        {
+                            BookID = book.BookID,
+                            ReaderID = reader.ReaderID,
+                            BorrowedDate = DateTime.Now,
+                            ExpectDate = DateTime.Now.AddMonths(1)
+                        };
 
 
-                    book.IsBorrowed = true;
-                    db.BorrowedBooks.Add(bbook);
+                        book.IsBorrowed = true;
+                        db.BorrowedBooks.Add(bbook);
 
-                    db.SaveChanges();
+                        db.SaveChanges();
 
-                    return View(id);
+                        return View(id);
 
 
+
+                    }
+                    catch (Exception)
+                    {
+                        ViewBag.Message = "No book with the given code";
+                        return View(id);
+                    }
 
                 }
                 catch(Exception)
                 {
-                    ViewBag.Message = "No book with the given code";
-                    return View(id);
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
                 }
-
-
 
             }
         }
@@ -227,73 +245,87 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult ReturnBook(int id,int code)
         {
-            ViewBag.Message = string.Empty;
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
-
-                if(reader.NrOfBooks()==0)
-                {
-                    ViewBag.Message = "No book to return";
-                    return View(id);
-                }
-
-                if(code<=0)
-                {
-                    ViewBag.Message = "Invalid input";
-                    return View(id);
-                }
-
                 try
                 {
-                    var bbook = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.ReturnDate == null && x.BookID == code).Single();
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
 
-                    bbook.ReturnDate = DateTime.Now;
+                    if (reader.NrOfBooks() == 0)
+                    {
+                        ViewBag.Message = "No book to return";
+                        return View(id);
+                    }
 
-                    var book = db.Books.Where(x => x.BookID == code).Single();
+                    if (code <= 0)
+                    {
+                        ViewBag.Message = "Invalid input";
+                        return View(id);
+                    }
 
-                    book.IsBorrowed = false;
+                    try
+                    {
+                        var bbook = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.ReturnDate == null && x.BookID == code).Single();
 
-                    db.SaveChanges();
+                        bbook.ReturnDate = DateTime.Now;
 
-                    return View(id);
+                        var book = db.Books.Where(x => x.BookID == code).Single();
 
+                        book.IsBorrowed = false;
+
+                        db.SaveChanges();
+
+                        return View(id);
+
+
+                    }
+                    catch (Exception)
+                    {
+                        ViewBag.Message = "No book with the given code";
+                        return View(id);
+                    }
 
                 }
                 catch(Exception)
                 {
-                    ViewBag.Message = "No book with the given code";
-                    return View(id);
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
                 }
-                
             }
         }
         public ActionResult BorrowedBooks(int id)
         {
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
-
-                var books = db.BorrowedBooks.Where(x => x.ReturnDate == null).Where(x => x.ReaderID == reader.ReaderID)
-                                            .Join(db.Books,
-                                                  bbook => bbook.BookID,
-                                                  book => book.BookID,
-                                                  (bbook, book) => new { BBook = bbook, Book = book }
-                                           ).Select(y => new { y.Book.BookID, y.Book.BookName, y.BBook.ExpectDate })
-                                           .ToList().OrderBy(x => x.BookID)
-                                           .Select(x=>new Models.Readers.BBook {ID=x.BookID,Name=x.BookName,ExpectDate=x.ExpectDate }).ToList();
-                var model = new Models.Readers.BBooks
+                try
                 {
-                    Id = id,
-                    books = books
-                };
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
-                return View(model);
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
 
+                    var books = db.BorrowedBooks.Where(x => x.ReturnDate == null).Where(x => x.ReaderID == reader.ReaderID)
+                                                .Join(db.Books,
+                                                      bbook => bbook.BookID,
+                                                      book => book.BookID,
+                                                      (bbook, book) => new { BBook = bbook, Book = book }
+                                               ).Select(y => new { y.Book.BookID, y.Book.BookName, y.BBook.ExpectDate })
+                                               .ToList().OrderBy(x => x.BookID)
+                                               .Select(x => new Models.Readers.BBook { ID = x.BookID, Name = x.BookName, ExpectDate = x.ExpectDate }).ToList();
+                    var model = new Models.Readers.BBooks
+                    {
+                        Id = id,
+                        books = books
+                    };
 
+                    return View(model);
+
+                }
+                catch(Exception)
+                {
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
+                }
             }
         }
 
@@ -302,35 +334,43 @@ namespace WebApplication6.Controllers
         {
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
-
-                var bbookReturned = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.BookID == code && x.ReturnDate == null).Single();
-
-                bbookReturned.ReturnDate = DateTime.Now;
-
-                var bookReturned = db.Books.Where(x => x.BookID == code).Single();
-
-                bookReturned.IsBorrowed = false;
-
-                db.SaveChanges();
-
-                var books = db.BorrowedBooks.Where(x => x.ReturnDate == null).Where(x => x.ReaderID == reader.ReaderID)
-                                            .Join(db.Books,
-                                                  bbook => bbook.BookID,
-                                                  book => book.BookID,
-                                                  (bbook, book) => new { BBook = bbook, Book = book }
-                                           ).Select(y => new { y.Book.BookID, y.Book.BookName, y.BBook.ExpectDate })
-                                           .ToList().OrderBy(x => x.BookID)
-                                           .Select(x => new Models.Readers.BBook { ID = x.BookID, Name = x.BookName, ExpectDate = x.ExpectDate }).ToList();
-                var model = new Models.Readers.BBooks
+                try
                 {
-                    Id = id,
-                    books = books
-                };
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
 
-                return View(model);
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                    var bbookReturned = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.BookID == code && x.ReturnDate == null).Single();
+
+                    bbookReturned.ReturnDate = DateTime.Now;
+
+                    var bookReturned = db.Books.Where(x => x.BookID == code).Single();
+
+                    bookReturned.IsBorrowed = false;
+
+                    db.SaveChanges();
+
+                    var books = db.BorrowedBooks.Where(x => x.ReturnDate == null).Where(x => x.ReaderID == reader.ReaderID)
+                                                .Join(db.Books,
+                                                      bbook => bbook.BookID,
+                                                      book => book.BookID,
+                                                      (bbook, book) => new { BBook = bbook, Book = book }
+                                               ).Select(y => new { y.Book.BookID, y.Book.BookName, y.BBook.ExpectDate })
+                                               .ToList().OrderBy(x => x.BookID)
+                                               .Select(x => new Models.Readers.BBook { ID = x.BookID, Name = x.BookName, ExpectDate = x.ExpectDate }).ToList();
+                    var model = new Models.Readers.BBooks
+                    {
+                        Id = id,
+                        books = books
+                    };
+
+                    return View(model);
+                }
+                catch(Exception)
+                {
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
+                }
             }
         }
         public ActionResult Top5(int id)
@@ -340,7 +380,6 @@ namespace WebApplication6.Controllers
         [HttpPost]
         public ActionResult Top5(int id ,int year)
         {
-            ViewBag.Message = string.Empty;
 
             using (var db = new LIBRARYEntities())
             {
@@ -371,35 +410,43 @@ namespace WebApplication6.Controllers
         }
         public ActionResult HistoryOfTheReader(int id)
         {
-            ViewBag.Message = string.Empty;
 
             using (var db = new LIBRARYEntities())
             {
-                var account = db.Accounts.Where(x => x.AccountID == id).Single();
-
-                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
-
-                var history = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID)
-                                                  .Join(db.Books,
-                                                        bbook => bbook.BookID,
-                                                        book => book.BookID,
-                                                        (bbook, book) => new { BBook = bbook, Book = book })
-                                                  .Select(y => new { y.BBook.BorrowedDate, y.BBook.ExpectDate, y.BBook.ReturnDate, y.Book.BookName })
-                                                  .OrderBy(x => x.BorrowedDate).ToList()
-                                                  .Select(x => new Models.ReaderHistory { ReaderName = reader.ReaderName, BookName = x.BookName, BorrowedDate = x.BorrowedDate, ExpectDate = x.ExpectDate, ReturnDate = x.ReturnDate }).ToList();
-                if(history.Count==0)
+                try
                 {
-                    ViewBag.Message = "The reader never borrowed a book";
-                    return View(id);
+                    var account = db.Accounts.Where(x => x.AccountID == id).Single();
+
+                    var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                    var history = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID)
+                                                      .Join(db.Books,
+                                                            bbook => bbook.BookID,
+                                                            book => book.BookID,
+                                                            (bbook, book) => new { BBook = bbook, Book = book })
+                                                      .Select(y => new { y.BBook.BorrowedDate, y.BBook.ExpectDate, y.BBook.ReturnDate, y.Book.BookName })
+                                                      .OrderBy(x => x.BorrowedDate).ToList()
+                                                      .Select(x => new Models.ReaderHistory { ReaderName = reader.ReaderName, BookName = x.BookName, BorrowedDate = x.BorrowedDate, ExpectDate = x.ExpectDate, ReturnDate = x.ReturnDate }).ToList();
+                    if (history.Count == 0)
+                    {
+                        ViewBag.Message = "The reader never borrowed a book";
+                        return View(id);
+                    }
+
+                    var model = new Models.Readers.ReaderModel
+                    {
+                        Id = id,
+                        list = history
+
+                    };
+                    return View(model);
                 }
-
-                var model = new Models.Readers.ReaderModel
+                catch(Exception)
                 {
-                    Id = id,
-                    list = history
+                    ViewBag.Message = "No account with the given id";
+                    return View("Login");
 
-                };
-                return View(model);
+                }
             }
         }
 

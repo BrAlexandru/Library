@@ -20,6 +20,7 @@
         <tr>
             <th>Book name</th>
             <th>Reader name</th>
+            <th>Borrowed date</th>
             <th>Return date</th>
         </tr>
         @foreach (var book in Model)
@@ -30,6 +31,7 @@
                 <tr>
                     <td>@book.BookName</td>
                     <td>@book.ReaderName</td>
+                    <td>@book.BorrowedDate.ToString("dd MMM yyyy")</td>
                     <td>@book.ReturnDate.Value.ToString("dd MMM yyyy")</td>
                 </tr>
             }
@@ -38,6 +40,7 @@
                 <tr>
                     <td>@book.BookName</td>
                     <td>@book.ReaderName</td>
+                    <td>@book.BorrowedDate.ToString("dd MMM yyyy")</td>
                     <td>expected untill @book.ExpectDate.ToString("dd MMM yyyy")</td>
                 </tr>
             }
