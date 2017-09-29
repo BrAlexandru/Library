@@ -12,5 +12,6 @@ namespace WebApplication6.Models.Readers
 
         public List<Book> SearchedBook;
 
+        public int Count { get; set; }
     }
 }

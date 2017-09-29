@@ -29,6 +29,12 @@
             </ul>
         </nav>
     </header>
+    @if (Model.SearchedBook.Count == 0)
+    {
+        <h3>@ViewBag.Message</h3>
+    }
+    else
+    {
     <div class="display">
         <table>
             <tr>
@@ -37,19 +43,45 @@
                 <th>Author</th>
                 <th>Type</th>
                 <th>Genre</th>
+                <th>Borrow</th>
             </tr>
-            @foreach (var book in Model.SearchedBook)
+            @if (Model.Count == 4)
             {
+                foreach (var book in Model.SearchedBook)
+            {
+
                 <tr>
                     <td>@book.BookID</td>
                     <td>@book.BookName</td>
                     <td>@book.BookAuthor</td>
                     <td>@book.BookType</td>
                     <td>@book.BookGenre</td>
+                    <td>Can't borrow more books</td>
                 </tr>
+            }
+            }
+            else
+            {
+                foreach(var book in Model.SearchedBook)
+                {
+                    <tr>
+                    
+                        <td>@book.BookID</td>
+                        <td>@book.BookName</td>
+                        <td>@book.BookAuthor</td>
+                        <td>@book.BookType</td>
+                        <td>@book.BookGenre</td>
+                        <td>
+                            <form method="post" action="/Reader/DisplayBooks?id=@Model.id&code=@book.BookID">
+                                <input type="submit" value="Borrow" />
+                            </form>
+                        </td>
+                    </tr>
+                }
             }
         </table>
     </div>
+    }
 
 
 </body>

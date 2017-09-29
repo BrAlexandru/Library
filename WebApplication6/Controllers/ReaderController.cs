@@ -89,14 +89,69 @@ namespace WebApplication6.Controllers
                 foreach (var book in db.Books)
                     if (book.IsBorrowed == false)
                         notBorrowed.Add(book);
+                        
+                if (notBorrowed.Count == 0)
+                    ViewBag.Message = "No books to display";
+
+                var account = db.Accounts.Where(x => x.AccountID ==id).Single();
+
+                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+
 
                 var model = new Models.Readers.SearchedBooks
                 {
                     id = id,
-                    SearchedBook = notBorrowed
+                    SearchedBook = notBorrowed,
+                    Count = reader.NrOfBooks()
+
                 };
 
                 return View(model);
+            }
+        }
+        [HttpPost]
+        public ActionResult DisplayBooks(int id, int code)
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                var account = db.Accounts.Where(x => x.AccountID == id).Single();
+
+                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                var book = db.Books.Where(x => x.BookID == code).Single();
+
+                var bbook = new BorrowedBook
+                {
+                    BookID = book.BookID,
+                    ReaderID = reader.ReaderID,
+                    BorrowedDate = DateTime.Now,
+                    ExpectDate = DateTime.Now.AddMonths(1)
+                };
+
+                book.IsBorrowed = true;
+                db.BorrowedBooks.Add(bbook);
+
+                db.SaveChanges();
+
+                var notBorrowed = new List<Book>();
+
+                foreach (var item in db.Books)
+                    if (item.IsBorrowed == false)
+                        notBorrowed.Add(item);
+
+                if (notBorrowed.Count == 0)
+                    ViewBag.Message = "No books to display";
+
+                var model = new Models.Readers.SearchedBooks
+                {
+                    id = id,
+                    SearchedBook=notBorrowed,
+                    Count=reader.NrOfBooks()
+
+                };
+                return View(model);
+
             }
         }
         public ActionResult BorrowBook(int id)
@@ -239,6 +294,43 @@ namespace WebApplication6.Controllers
                 return View(model);
 
 
+            }
+        }
+
+        [HttpPost]
+        public ActionResult BorrowedBooks(int id ,int code)
+        {
+            using (var db = new LIBRARYEntities())
+            {
+                var account = db.Accounts.Where(x => x.AccountID == id).Single();
+
+                var reader = db.Readers.Where(x => x.ReaderID == account.ReaderID).Single();
+
+                var bbookReturned = db.BorrowedBooks.Where(x => x.ReaderID == reader.ReaderID && x.BookID == code && x.ReturnDate == null).Single();
+
+                bbookReturned.ReturnDate = DateTime.Now;
+
+                var bookReturned = db.Books.Where(x => x.BookID == code).Single();
+
+                bookReturned.IsBorrowed = false;
+
+                db.SaveChanges();
+
+                var books = db.BorrowedBooks.Where(x => x.ReturnDate == null).Where(x => x.ReaderID == reader.ReaderID)
+                                            .Join(db.Books,
+                                                  bbook => bbook.BookID,
+                                                  book => book.BookID,
+                                                  (bbook, book) => new { BBook = bbook, Book = book }
+                                           ).Select(y => new { y.Book.BookID, y.Book.BookName, y.BBook.ExpectDate })
+                                           .ToList().OrderBy(x => x.BookID)
+                                           .Select(x => new Models.Readers.BBook { ID = x.BookID, Name = x.BookName, ExpectDate = x.ExpectDate }).ToList();
+                var model = new Models.Readers.BBooks
+                {
+                    Id = id,
+                    books = books
+                };
+
+                return View(model);
             }
         }
         public ActionResult Top5(int id)

@@ -40,6 +40,7 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>ExpectDate</th>
+                    <th>Return</th>
                 </tr>
                 @foreach (var book in Model.books)
                 {
@@ -47,6 +48,11 @@
                         <td>@book.ID</td>
                         <td>@book.Name</td>
                         <td>@book.ExpectDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <form method="post" action="/Reader/BorrowedBooks?id=@Model.Id&code=@book.ID">
+                                <input type="submit" value="Return" />
+                            </form>
+                        </td>
                     </tr>
                 }
             </table>
